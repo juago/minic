@@ -10,18 +10,22 @@
 class SymbolTable;
 class SymbolTableStack;
 
-class SymbolTableEntry
+class SymbolTable
 {
 public:
-	std::string  getName() const;
-	SymbolTable* getSymbolTable() const;
-
+    void AddSymbol(NStatement* pStmtNode);
 
 private:
-	std::string     m_name;
-	SymbolTable*    m_pSymTab;
-	int             m_lineNo;
-	Node*           m_pNode;
+    std::map<NStatement *> m_decls;
+};
+
+class SymbolTableStack
+{
+public:
+
+private:
+    SymbolTableEntry*              m_pGlobalSymTable;
+    std::stack<SymbolTableEntry *> m_symStack;
 };
 
 

@@ -24,10 +24,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="grammar\c.l">
+    <CustomBuild Include="grammar\lexer.l">
       <Filter>grammar</Filter>
     </CustomBuild>
-    <CustomBuild Include="grammar\c.y">
+    <CustomBuild Include="grammar\parser.y">
       <Filter>grammar</Filter>
     </CustomBuild>
   </ItemGroup>

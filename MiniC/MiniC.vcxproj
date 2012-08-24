@@ -75,30 +75,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="grammar\c.l">
-      <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cd $(ProjectDir)src
-..\tools\flex.exe ..\grammar\c.l</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Executing flex on %(FullPath)</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)src\lexer.cpp;%(Outputs)</Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\include\parser.h</AdditionalInputs>
-    </CustomBuild>
-    <CustomBuild Include="grammar\c.y">
-      <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">SET BISON_SIMPLE=$(ProjectDir)tools\bison.simple
-
-SET BISON_HAIRY=$(ProjectDir)tools\bison.hairy
-
-$(ProjectDir)tools/bison -o $(ProjectDir)src/parser.cpp -d -t -v $(ProjectDir)grammar/c.y --no-lines --verbose
-mv $(ProjectDir)src/parser.cpp.h $(ProjectDir)include/parser.h
-
-rm $(ProjectDir)src/parser.cpp.output
-</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Executing Bison on %(FullPath)</Message>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)src\parser.cpp;$(ProjectDir)include\parser.h</Outputs>
-    </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="src\lexer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\parser.cpp" />
@@ -114,6 +90,30 @@ rm $(ProjectDir)src/parser.cpp.output
     <ClInclude Include="include\node.h" />
     <ClInclude Include="include\parser.h" />
     <ClInclude Include="include\utils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="grammar\lexer.l">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cd $(ProjectDir)src
+..\tools\flex.exe ..\grammar\lexer.l</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Executing flex on %(FullPath)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)src\lexer.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\include\parser.h</AdditionalInputs>
+    </CustomBuild>
+    <CustomBuild Include="grammar\parser.y">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">SET BISON_SIMPLE=$(ProjectDir)tools\bison.simple
+
+SET BISON_HAIRY=$(ProjectDir)tools\bison.hairy
+
+$(ProjectDir)tools/bison -o $(ProjectDir)src/parser.cpp -d -t -v $(ProjectDir)grammar/parser.y --no-lines --verbose
+mv $(ProjectDir)src/parser.cpp.h $(ProjectDir)include/parser.h
+
+rm $(ProjectDir)src/parser.cpp.output
+</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Executing Bison on %(FullPath)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)src\parser.cpp;$(ProjectDir)include\parser.h</Outputs>
+    </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

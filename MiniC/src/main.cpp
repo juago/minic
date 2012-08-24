@@ -5,8 +5,8 @@ using namespace std;
 
 extern int yyparse();
 extern FILE *yyin;
-extern NBlock* pProgramBlock;
-extern NMainDefinition* pMain;
+extern Block*    pProgramBlock;
+extern MainDefn* pMain;
 
 int main(int argc, char **argv)
 {

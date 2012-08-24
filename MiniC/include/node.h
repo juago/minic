@@ -7,17 +7,17 @@
 
 #include "logger.h"
 
-class NStatement;
-class NExpression;
-class NVariable;
+class Stmt;
+class Expr;
+class Variable;
 
-typedef std::vector<NStatement*> StatementList;
-typedef std::vector<NExpression*> ExpressionList;
-typedef std::vector<NVariable*> VariableList;
+typedef std::vector<Stmt*> StmtList;
+typedef std::vector<Expr*> ExprList;
+typedef std::vector<Variable*> VariableList;
 
 typedef unsigned long long ull;
 
-enum DataType
+enum EnumDataType
 {
     C_VOID = 0,
     C_CHAR,
@@ -39,264 +39,478 @@ enum DataType
 class Node
 {
 public:
-    explicit Node(ull lineNo) : m_lineNo(lineNo) {}
+    explicit Node(ull lineNo) : m_lineNo(lineNo) 
+    {
+    }
+
     virtual ~Node() { }
 
 private:
     ull m_lineNo;
 };
 
-class NExpression : public Node
+class Expr : public Node
 {
 public:
-    NExpression(ull lineNo) : Node(lineNo) {}
+    Expr(ull lineNo) : Node(lineNo) {}
 };
 
-class NDataType : public NExpression
+class DataType : public Expr
 {
 private:
-    DataType m_type;
+    EnumDataType m_type;
 
 public:
-    NDataType(const DataType dataType,
-              ull lineNo) :
-      m_type(dataType), NExpression(lineNo) 
+    DataType(const EnumDataType dataType,
+             ull lineNo) :
+      m_type(dataType), Expr(lineNo) 
     { 
-        Log().Get(logINFO) << "Creating NDataType: " << dataType << std::endl;  
+        Log().Get(logINFO) << "Creating DataType: " << dataType << std::endl;  
     }
 };
 
-class NIdentifier : public NExpression
+class Identifier : public Expr
 {
 private:
     std::string m_name;
 
 public:
-    NIdentifier(const std::string& name,
+    Identifier(const std::string& name,
                 ull lineNo) :
-        m_name(name), NExpression(lineNo) 
+        m_name(name), Expr(lineNo) 
     {
-        Log().Get(logINFO) << "Creating NIdentifier: " << m_name << std::endl;
+        Log().Get(logINFO) << "Creating Identifier: " << m_name << std::endl;
     }
 };
 
-class NStatement : public Node
+class Stmt : public Node
 {
 public:
-    NStatement(ull lineNo) : Node(lineNo) { }
+    Stmt(ull lineNo) : Node(lineNo) { }
 };
 
-class NInteger : public NExpression
+class Integer : public Expr
 {
 public:
     long long m_value;
 
 public:
-    NInteger(long long value,
-             ull lineNo) : m_value(value), NExpression(lineNo) 
+    Integer(long long value,
+             ull lineNo) : m_value(value), Expr(lineNo) 
     {
-        Log().Get(logINFO) << "Creating NInteger" << std::endl;  
+        Log().Get(logINFO) << "Creating Integer" << std::endl;  
     }
 };
 
-class NDouble : public NExpression
+class Double : public Expr
 {
 public:
     double m_value;
 
 public:
-    NDouble(double value, 
-            ull lineNo) : m_value(value), NExpression(lineNo) 
+    Double(double value, 
+            ull lineNo) : m_value(value), Expr(lineNo) 
     {
-        Log().Get(logINFO) << "Creating NDouble" << std::endl;  
+        Log().Get(logINFO) << "Creating Double" << std::endl;  
     }
 };
 
-class NFloat : public NExpression
+class Float : public Expr
 {
 private:
     float m_value;
 
 public:
-    NFloat(float value,
-           ull lineNo) : m_value(value), NExpression(lineNo)
+    Float(float value,
+           ull lineNo) : m_value(value), Expr(lineNo)
     {
-        Log().Get(logINFO) << "Creating NFloat" << std::endl;  
+        Log().Get(logINFO) << "Creating Float" << std::endl;  
     }
 };
 
-class NMethodCall : public NExpression
+class Bool : public Expr
 {
 private:
-    const NIdentifier* m_pId;
-    ExpressionList     m_arguments;
+    bool m_value;
 
 public:
-    NMethodCall(const NIdentifier* pId,
-                ExpressionList& arguments,
-                ull lineNo) :
-    m_pId(pId), m_arguments(arguments), NExpression(lineNo)
+    Bool(bool value,
+          ull  lineNo) : m_value(value), Expr(lineNo)
     {
-        Log().Get(logINFO) << "Creating NMethodCall" << std::endl;  
-    }
-
-    NMethodCall(const NIdentifier* pId,
-                ull lineNo) : m_pId(pId), NExpression(lineNo) 
-    {
-        Log().Get(logINFO) << "Creating NMethodCall" << std::endl;  
+        Log().Get(logINFO) << "Creating Bool" << std::endl;
     }
 };
 
-class NBinaryOperator : public NExpression
+class Char : public Expr
+{
+private:
+    char m_value;
+
+public:
+    Char(char value,
+          ull  lineNo) : m_value(value), Expr(lineNo)
+    {
+        Log().Get(logINFO) << "Creating Char" << std::endl;
+    }
+};
+
+class FunctionCall : public Expr
+{
+private:
+    const Identifier* m_pId;
+    ExprList     m_arguments;
+
+public:
+    FunctionCall(const Identifier* pId,
+                ExprList& arguments,
+                ull lineNo) :
+    m_pId(pId), m_arguments(arguments), Expr(lineNo)
+    {
+        Log().Get(logINFO) << "Creating FunctionCall" << std::endl;  
+    }
+
+    FunctionCall(const Identifier* pId,
+                ull lineNo) : m_pId(pId), Expr(lineNo) 
+    {
+        Log().Get(logINFO) << "Creating FunctionCall" << std::endl;  
+    }
+};
+
+class BinaryOperator : public Expr
 {
 private:
     int          m_op;
-    NExpression* m_pLhs;
-    NExpression* m_pRhs;
+    Expr* m_pLhs;
+    Expr* m_pRhs;
 
 public:
-    NBinaryOperator(NExpression* pLhs, 
+    BinaryOperator(Expr* pLhs, 
                     int op, 
-                    NExpression* pRhs,
+                    Expr* pRhs,
                     ull lineNo) :
-    m_pLhs(pLhs), m_pRhs(pRhs), m_op(op), NExpression(lineNo)
+    m_pLhs(pLhs), m_pRhs(pRhs), m_op(op), Expr(lineNo)
     {
-        Log().Get(logINFO) << "Creating NBinaryOperator" << std::endl;  
+        Log().Get(logINFO) << "Creating BinaryOperator" << std::endl;  
     }
 };
 
-class NAssignment : public NExpression
+class Assignment : public Expr
 {
 private:
-    NIdentifier* m_pLhs;
-    NExpression* m_pRhs;
+    Identifier* m_pLhs;
+    Expr* m_pRhs;
 
 public:
-    NAssignment(NIdentifier* pLhs,
-                NExpression* pRhs,
+    Assignment(Identifier* pLhs,
+                Expr* pRhs,
                 ull lineNo) : 
-    m_pLhs(pLhs), m_pRhs(pRhs), NExpression(lineNo)
+    m_pLhs(pLhs), m_pRhs(pRhs), Expr(lineNo)
     {
-        Log().Get(logINFO) << "Creating NAssignment" << std::endl;  
+        Log().Get(logINFO) << "Creating Assignment" << std::endl;  
     }
 };
 
-class NBlock : public NExpression
+class Block : public Expr
 {
 private:
-    StatementList m_statements;
+    StmtList m_Stmts;
 
 public:
-    NBlock(ull lineNo) : NExpression(lineNo) 
+    Block(ull lineNo) : Expr(lineNo) 
     {
-        Log().Get(logINFO) << "Creating NBlock" << std::endl;  
+        Log().Get(logINFO) << "Creating Block" << std::endl;  
     }
 
-    void AddStatement(NStatement* pStmt)
+    void AddStmt(Stmt* pStmt)
     {
-        m_statements.push_back(pStmt);
+        m_Stmts.push_back(pStmt);
     }
 };
 
-class NExpressionStatement : public NStatement
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+class UnaryExpr : public Expr
 {
-private:
-    NExpression* m_pExpression;
+    protected:
+        Expr* m_pRhs;
 
-public:
-    NExpressionStatement(NExpression* pExpression,
-                         ull lineNo) : 
-    m_pExpression(pExpression), NStatement(lineNo) 
-    {
-        Log().Get(logINFO) << "Creating NExpressionStatement" << std::endl;  
-    }
+    public:
+        UnaryExpr(Expr* pRhs, ull lineNo) : Expr(lineNo), m_pRhs(pRhs) 
+        {
+        }
 };
 
-class NVariable : public NStatement
+class NegateUnaryExpr : public UnaryExpr
 {
-private:
-    const NDataType* m_datatype;
-    NIdentifier*     m_pId;
-    NExpression*     m_pAssignmentExpr;
-
-public:
-    NVariable(const NDataType* dataType, 
-              NIdentifier* pId,
-              ull lineNo) : 
-    m_datatype(dataType), m_pId(pId), m_pAssignmentExpr(NULL), NStatement(lineNo) 
-    {
-        Log().Get(logINFO) << "Creating NVariable" << std::endl;  
-    }
-
-    NVariable(const NDataType* dataType,
-              NIdentifier* pId,
-              NExpression* assignmentExpr,
-              ull lineNo) :
-    m_datatype(dataType), m_pId(pId), m_pAssignmentExpr(assignmentExpr), NStatement(lineNo) 
-    {
-        Log().Get(logINFO) << "Creating NVariable" << std::endl;  
-    }
+    public:
+        NegateUnaryExpr(Expr* pRhs, ull lineNo) : UnaryExpr(pRhs, lineNo)
+        {
+        }
 };
 
-class NFunctionDeclaration : public NStatement
+class AdditionUnaryExpr : public NegateUnaryExpr
+{
+    public:
+        AdditionUnaryExpr(Expr* pRhs, ull lineNo) : NegateUnaryExpr(pRhs, lineNo)
+        {
+        }
+};
+
+class SubtractUnaryExpr : public NegateUnaryExpr
+{
+    public:
+        SubtractUnaryExpr(Expr* pRhs, ull lineNo) : NegateUnaryExpr(pRhs, lineNo)
+        {
+        }
+};
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+class BinaryExpr : public Expr
 {
 protected:
-    const NDataType*   m_pDataType;
-    const NIdentifier* m_pID;
+    Expr* m_pLhs;
+    Expr* m_pRhs;
+
+public:
+    BinaryExpr(Expr* pLhs,
+                Expr* pRhs,
+                ull          lineNo) : m_pLhs(pLhs), m_pRhs(pRhs), Expr(lineNo)
+    {
+    }
+};
+
+class NumberBinaryExpr : public BinaryExpr
+{
+public:
+    NumberBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : BinaryExpr(pLhs, pRhs, lineNo)
+    {
+    }
+};
+
+class AdditionBinaryExpr : public NumberBinaryExpr
+{
+public:
+    AdditionBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : NumberBinaryExpr(pLhs, pRhs, lineNo)
+    {
+    }
+};
+
+class SubtractioBinaryExpr : public NumberBinaryExpr
+{
+public:
+    SubtractioBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : NumberBinaryExpr(pLhs, pRhs, lineNo)
+    {
+    }
+};
+
+class MultiplicatioBinaryExpr : public NumberBinaryExpr
+{
+public:
+    MultiplicatioBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : NumberBinaryExpr(pLhs, pRhs, lineNo)
+    {
+    }
+};
+
+class DivisioBinaryExpr : public NumberBinaryExpr
+{
+public:
+    DivisioBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : NumberBinaryExpr(pLhs, pRhs, lineNo)
+    {
+    }
+};
+
+class ModulusBinaryExpr : public NumberBinaryExpr
+{
+public:
+    ModulusBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : NumberBinaryExpr(pLhs, pRhs, lineNo)
+    {
+    }
+};
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+class LogicBinaryExpr : public BinaryExpr
+{
+public:
+    LogicBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : BinaryExpr(pLhs, pRhs, lineNo)
+    {
+    }
+};
+
+class OrBinaryExpr : public LogicBinaryExpr
+{
+public:
+    OrBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : LogicBinaryExpr(pLhs, pRhs, lineNo)
+    {
+    }
+};
+
+class AndBinaryExpr : public LogicBinaryExpr
+{
+public:
+    AndBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : LogicBinaryExpr(pLhs, pRhs, lineNo)
+    {
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+class CompareBinaryExpr : public BinaryExpr
+{
+public:
+    CompareBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : BinaryExpr(pLhs, pRhs, lineNo)
+    {
+    }
+};
+
+class LECompareBinaryExpr : public CompareBinaryExpr
+{
+public:
+    LECompareBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : CompareBinaryExpr(pLhs, pRhs, lineNo)
+    {
+    }
+};
+
+class LTCompareBinaryExpr : public CompareBinaryExpr
+{
+public:
+    LTCompareBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : CompareBinaryExpr(pLhs, pRhs, lineNo)
+    {
+    }
+};
+
+class GECompareBinaryExpr : public CompareBinaryExpr
+{
+public:
+    GECompareBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : CompareBinaryExpr(pLhs, pRhs, lineNo)
+    {
+    }
+};
+
+class GTCompareBinaryExpr : public CompareBinaryExpr
+{
+public:
+    GTCompareBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : CompareBinaryExpr(pLhs, pRhs, lineNo)
+    {
+    }
+};
+
+class EqCompareBinaryExpr : public CompareBinaryExpr
+{
+public:
+    EqCompareBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : CompareBinaryExpr(pLhs, pRhs, lineNo)
+    {
+    }
+};
+
+class NECompareBinaryExpr : public CompareBinaryExpr
+{
+public:
+    NECompareBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : CompareBinaryExpr(pLhs, pRhs, lineNo)
+    {
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class ExprStmt : public Stmt
+{
+private:
+    Expr* m_pExpr;
+
+public:
+    ExprStmt(Expr* pExpr,
+                         ull lineNo) : 
+    m_pExpr(pExpr), Stmt(lineNo) 
+    {
+        Log().Get(logINFO) << "Creating ExprStmt" << std::endl;  
+    }
+};
+
+class Variable : public Stmt
+{
+private:
+    const DataType* m_datatype;
+    Identifier*     m_pId;
+    Expr*     m_pAssignmentExpr;
+
+public:
+    Variable(const DataType* dataType, 
+              Identifier* pId,
+              ull lineNo) : 
+    m_datatype(dataType), m_pId(pId), m_pAssignmentExpr(NULL), Stmt(lineNo) 
+    {
+        Log().Get(logINFO) << "Creating Variable" << std::endl;  
+    }
+
+    Variable(const DataType* dataType,
+              Identifier* pId,
+              Expr* assignmentExpr,
+              ull lineNo) :
+    m_datatype(dataType), m_pId(pId), m_pAssignmentExpr(assignmentExpr), Stmt(lineNo) 
+    {
+        Log().Get(logINFO) << "Creating Variable" << std::endl;  
+    }
+};
+
+class FuncDecl : public Stmt
+{
+protected:
+    const DataType*   m_pDataType;
+    const Identifier* m_pID;
     VariableList       m_arguments;
 
 public:
-    NFunctionDeclaration(const NDataType* datatype,
-                         const NIdentifier* id,
+    FuncDecl(const DataType* datatype,
+                         const Identifier* id,
                          const VariableList& arguments,
                          ull lineNo) :
-    m_pDataType(datatype), m_pID(id), m_arguments(arguments), NStatement(lineNo) 
+    m_pDataType(datatype), m_pID(id), m_arguments(arguments), Stmt(lineNo) 
     {
-        Log().Get(logINFO) << "Creating NFunctionDeclaration" << std::endl;  
+        Log().Get(logINFO) << "Creating FuncDecl" << std::endl;  
     }
 };
 
-class NFunctionDefinition : public NStatement
+class FuncDefn : public Stmt
 {
 protected:
-    const NDataType*   m_pDataType;
-    const NIdentifier* m_pID;
+    const DataType*   m_pDataType;
+    const Identifier* m_pID;
     VariableList       m_arguments;
-    NBlock*            m_pBlock;
+    Block*            m_pBlock;
 
 public:
-    NFunctionDefinition(const NDataType* datatype, 
-                        const NIdentifier* id,
+    FuncDefn(const DataType* datatype, 
+                        const Identifier* id,
                         const VariableList& arguments,
-                        NBlock* block,
+                        Block* block,
                         ull lineNo) :
     m_pDataType(datatype), m_pID(id), m_arguments(arguments), m_pBlock(block),
-    NStatement(lineNo)
+    Stmt(lineNo)
     {
-        Log().Get(logINFO) << "Creating NFunctionDefinition" << std::endl;  
+        Log().Get(logINFO) << "Creating FuncDefn" << std::endl;  
     }
 };
 
-class NMainDefinition : public NFunctionDefinition
+class MainDefn : public FuncDefn
 {
 public:
-    NMainDefinition(const NDataType* datatype, 
+    MainDefn(const DataType* datatype, 
                     const VariableList& arguments,
-                    NBlock* block,
+                    Block* block,
                     ull lineNo) :
-    NFunctionDefinition(datatype, new NIdentifier("main", lineNo),
+    FuncDefn(datatype, new Identifier("main", lineNo),
                         arguments, block, lineNo) 
     {
-        Log().Get(logINFO) << "Creating NMainDefinition" << std::endl;  
+        Log().Get(logINFO) << "Creating MainDefn" << std::endl;  
     }
 };
 
-class NConditionalExpression : public NStatement
+class NConditionalExpr : public Stmt
 {
 public:
-    NConditionalExpression(ull lineNo) : NStatement(lineNo) 
+    NConditionalExpr(ull lineNo) : Stmt(lineNo) 
     {
-        Log().Get(logINFO) << "Creating NConditionalExpression" << std::endl;  
+        Log().Get(logINFO) << "Creating NConditionalExpr" << std::endl;  
     }
 };
 

@@ -1,5 +1,5 @@
 
-/*  A Bison parser, made from c:\dropbox\minic\minic\grammar/c.y with Bison version GNU Bison version 1.24
+/*  A Bison parser, made from c:\dev\minic\minic\grammar/c.y with Bison version GNU Bison version 1.24
   */
 
 #define YYBISON 1  /* Identify Bison output.  */
@@ -8,30 +8,40 @@
 #define	INTEGER_NUM	259
 #define	DOUBLE_NUM	260
 #define	FLOAT_NUM	261
-#define	MAIN	262
-#define	INT	263
-#define	FLOAT	264
-#define	DOUBLE	265
-#define	CEQ	266
-#define	CNE	267
-#define	CLT	268
-#define	CLE	269
-#define	CGT	270
-#define	CGE	271
-#define	EQUAL	272
-#define	LPAREN	273
-#define	RPAREN	274
-#define	LBRACE	275
-#define	RBRACE	276
-#define	COMMA	277
-#define	DOT	278
-#define	SEMICOLON	279
-#define	PLUS	280
-#define	MINUS	281
-#define	MUL	282
-#define	DIV	283
+#define	BOOL_LITERAL	262
+#define	MAIN	263
+#define	INT	264
+#define	FLOAT	265
+#define	DOUBLE	266
+#define	VOID	267
+#define	BOOL	268
+#define	CHAR	269
+#define	CEQ	270
+#define	CNE	271
+#define	CLT	272
+#define	CLE	273
+#define	CGT	274
+#define	CGE	275
+#define	EQUAL	276
+#define	LPAREN	277
+#define	RPAREN	278
+#define	LBRACE	279
+#define	RBRACE	280
+#define	COMMA	281
+#define	DOT	282
+#define	SEMICOLON	283
+#define	PLUS	284
+#define	MINUS	285
+#define	MUL	286
+#define	DIV	287
+#define	MODULUS	288
+#define	LSHIFT	289
+#define	RSHIFT	290
+#define	IF	291
+#define	ELSE	292
+#define	WHILE	293
+#define	RETURN	294
 
-#line 1 "c:\dropbox\minic\minic\grammar/c.y"
 
     #include <cstdio>
     #include <cstdlib>
@@ -40,8 +50,8 @@
 
     using namespace std;
 
-    NBlock* pProgramBlock; /* the top level root node of our final AST */
-    NMainDefinition* pMain;
+    Block*    pProgramBlock; /* the top level root node of our final AST */
+    MainDefn* pMain;
 
     extern int yylex();
     extern unsigned int lineNo;
@@ -51,20 +61,20 @@
     void yyerror(char *s)
     {
          printf("Line %d: %s at %s in this line:\n%s\n",
-               lineNo, s, yytext, linebuf);
+                lineNo, s, yytext, linebuf);
     }
 
-#line 25 "c:\dropbox\minic\minic\grammar/c.y"
-typedef union {
+typedef union
+{
     Node                                      *node;
-    NBlock                                    *block;
-    NExpression                               *expr;
-    NStatement                                *stmt;
-    NIdentifier                               *ident;
-    NVariable                                 *var_decl;
-    NDataType                                 *data_type;
-    std::vector<NVariable*>                   *varvec;
-    std::vector<NExpression*>                 *exprvec;
+    Block                                     *block;
+    Expr                                      *expr;
+    Stmt                                      *stmt;
+    Identifier                                *ident;
+    Variable                                  *var_decl;
+    DataType                                  *data_type;
+    std::vector<Variable*>                    *varvec;
+    std::vector<Expr*>                        *exprvec;
     std::string                               *string;
     int                                        token;
 } YYSTYPE;
@@ -101,9 +111,9 @@ typedef
 
 #define	YYFINAL		71
 #define	YYFLAG		-32768
-#define	YYNTBASE	29
+#define	YYNTBASE	40
 
-#define YYTRANSLATE(x) ((unsigned)(x) <= 283 ? yytranslate[x] : 45)
+#define YYTRANSLATE(x) ((unsigned)(x) <= 294 ? yytranslate[x] : 56)
 
 static const char yytranslate[] = {     0,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -134,7 +144,8 @@ static const char yytranslate[] = {     0,
      2,     2,     2,     2,     2,     1,     2,     3,     4,     5,
      6,     7,     8,     9,    10,    11,    12,    13,    14,    15,
     16,    17,    18,    19,    20,    21,    22,    23,    24,    25,
-    26,    27,    28
+    26,    27,    28,    29,    30,    31,    32,    33,    34,    35,
+    36,    37,    38,    39
 };
 
 #if YYDEBUG != 0
@@ -146,49 +157,50 @@ static const short yyprhs[] = {     0,
    123,   125,   127,   129,   131,   133,   135
 };
 
-static const short yyrhs[] = {     8,
-     0,     9,     0,    10,     0,    31,     0,    32,     0,    31,
-    32,     0,    34,     0,    35,     0,    37,     0,    38,     0,
-    36,     0,    42,     0,    20,    31,    21,     0,    20,    21,
-     0,    29,    40,    24,     0,    29,    40,    17,    42,    24,
-     0,    29,    40,     0,    29,     7,    18,    39,    19,    24,
-     0,    29,     7,    18,    39,    19,    33,     0,    29,    40,
-    18,    39,    19,    24,     0,    29,    40,    18,    39,    19,
-    33,     0,     0,    34,     0,    39,    22,    34,     0,     3,
-     0,     4,     0,     5,     0,     6,     0,    40,    17,    42,
-    24,     0,    40,    18,    43,    19,     0,    40,     0,    41,
-     0,    42,    44,    42,     0,    18,    42,    19,     0,     0,
-    42,     0,    43,    22,    42,     0,    11,     0,    12,     0,
-    13,     0,    14,     0,    15,     0,    16,     0,    25,     0,
-    26,     0,    27,     0,    28,     0
+static const short yyrhs[] = {     9,
+     0,    10,     0,    11,     0,    42,     0,    43,     0,    42,
+    43,     0,    45,     0,    46,     0,    48,     0,    49,     0,
+    47,     0,    53,     0,    24,    42,    25,     0,    24,    25,
+     0,    40,    51,    28,     0,    40,    51,    21,    53,    28,
+     0,    40,    51,     0,    40,     8,    22,    50,    23,    28,
+     0,    40,     8,    22,    50,    23,    44,     0,    40,    51,
+    22,    50,    23,    28,     0,    40,    51,    22,    50,    23,
+    44,     0,     0,    45,     0,    50,    26,    45,     0,     3,
+     0,     4,     0,     5,     0,     6,     0,    51,    21,    53,
+    28,     0,    51,    22,    54,    23,     0,    51,     0,    52,
+     0,    53,    55,    53,     0,    22,    53,    23,     0,     0,
+    53,     0,    54,    26,    53,     0,    15,     0,    16,     0,
+    17,     0,    18,     0,    19,     0,    20,     0,    29,     0,
+    30,     0,    31,     0,    32,     0
 };
 
 #endif
 
 #if YYDEBUG != 0
 static const short yyrline[] = { 0,
-    78,    79,    80,    83,    86,    87,    90,    91,    92,    93,
-    94,    95,    98,    99,   102,   103,   104,   107,   114,   121,
-   127,   133,   134,   135,   138,   141,   142,   143,   146,   147,
-   148,   149,   150,   151,   154,   155,   156,   159,   159,   159,
-   159,   159,   159,   160,   160,   160,   160
+   125,   126,   127,   130,   133,   134,   137,   138,   139,   140,
+   141,   142,   145,   146,   149,   150,   151,   154,   161,   168,
+   174,   180,   181,   182,   185,   188,   189,   190,   193,   194,
+   195,   196,   197,   198,   201,   202,   203,   206,   206,   206,
+   206,   206,   206,   207,   207,   207,   207
 };
 
 static const char * const yytname[] = {   "$","error","$undefined.","IDENTIFIER",
-"INTEGER_NUM","DOUBLE_NUM","FLOAT_NUM","MAIN","INT","FLOAT","DOUBLE","CEQ","CNE",
-"CLT","CLE","CGT","CGE","EQUAL","LPAREN","RPAREN","LBRACE","RBRACE","COMMA",
-"DOT","SEMICOLON","PLUS","MINUS","MUL","DIV","data_type","program","stmts","stmt",
-"block","var_decl","main_decl","main_defn","func_decl","func_defn","func_args",
+"INTEGER_NUM","DOUBLE_NUM","FLOAT_NUM","BOOL_LITERAL","MAIN","INT","FLOAT","DOUBLE",
+"VOID","BOOL","CHAR","CEQ","CNE","CLT","CLE","CGT","CGE","EQUAL","LPAREN","RPAREN",
+"LBRACE","RBRACE","COMMA","DOT","SEMICOLON","PLUS","MINUS","MUL","DIV","MODULUS",
+"LSHIFT","RSHIFT","IF","ELSE","WHILE","RETURN","data_type","program","stmts",
+"stmt","block","var_decl","main_decl","main_defn","func_decl","func_defn","func_args",
 "ident","numeric","expr","call_args","comparison",""
 };
 #endif
 
 static const short yyr1[] = {     0,
-    29,    29,    29,    30,    31,    31,    32,    32,    32,    32,
-    32,    32,    33,    33,    34,    34,    34,    35,    36,    37,
-    38,    39,    39,    39,    40,    41,    41,    41,    42,    42,
-    42,    42,    42,    42,    43,    43,    43,    44,    44,    44,
-    44,    44,    44,    44,    44,    44,    44
+    40,    40,    40,    41,    42,    42,    43,    43,    43,    43,
+    43,    43,    44,    44,    45,    45,    45,    46,    47,    48,
+    49,    50,    50,    50,    51,    52,    52,    52,    53,    53,
+    53,    53,    53,    53,    54,    54,    54,    55,    55,    55,
+    55,    55,    55,    55,    55,    55,    55
 };
 
 static const short yyr2[] = {     0,
@@ -215,61 +227,59 @@ static const short yydefgoto[] = {     9,
     17,    18,    19,    44,    36
 };
 
-static const short yypact[] = {   103,
--32768,-32768,-32768,-32768,-32768,-32768,-32768,   119,    21,   103,
--32768,-32768,-32768,-32768,-32768,-32768,     8,-32768,    89,    47,
-   -16,     3,-32768,   119,   119,-32768,-32768,-32768,-32768,-32768,
--32768,-32768,-32768,-32768,-32768,   119,-32768,    60,   119,    60,
--32768,    65,    89,    28,    89,     5,-32768,    34,    71,    45,
--32768,-32768,   119,    -1,    24,    60,-32768,    25,    89,     1,
--32768,-32768,-32768,-32768,-32768,-32768,    33,-32768,    35,    52,
+static const short yypact[] = {    56,
+-32768,-32768,-32768,-32768,-32768,-32768,-32768,    46,    11,    56,
+-32768,-32768,-32768,-32768,-32768,-32768,    97,-32768,    96,    54,
+   -14,    -1,-32768,    46,    46,-32768,-32768,-32768,-32768,-32768,
+-32768,-32768,-32768,-32768,-32768,    46,-32768,    71,    46,    71,
+-32768,    72,    96,    30,    96,    13,-32768,    53,    78,    94,
+-32768,-32768,    46,   -19,     0,    71,-32768,     6,    96,     1,
+-32768,-32768,-32768,-32768,-32768,-32768,    33,-32768,    22,    25,
 -32768
 };
 
-static const short yypgoto[] = {   -26,
--32768,   -27,   -10,   -24,   -25,-32768,-32768,-32768,-32768,    15,
+static const short yypgoto[] = {   -25,
+-32768,   -27,   -10,   -23,     7,-32768,-32768,-32768,-32768,     8,
     -6,-32768,    -7,-32768,-32768
 };
 
 
-#define	YYLAST		137
+#define	YYLAST		128
 
 
 static const short yytable[] = {    23,
-    20,    38,    22,     1,     2,     3,     4,     1,     5,     6,
-     7,    46,    47,    46,    47,    39,    42,    43,     8,    39,
-    40,    66,    41,     1,    24,    25,    41,    21,    45,    46,
-    63,    49,    67,    65,    70,     1,     2,     3,     4,    54,
-     5,     6,     7,    60,    60,    59,    52,    61,    64,    53,
-     8,    71,    55,    68,    50,    56,    23,    26,    27,    28,
-    29,    30,    31,    58,     0,    37,    56,     5,     6,     7,
-     0,    32,    33,    34,    35,    26,    27,    28,    29,    30,
-    31,    26,    27,    28,    29,    30,    31,     0,    51,    32,
-    33,    34,    35,     0,    57,    32,    33,    34,    35,    26,
-    27,    28,    29,    30,    31,     1,     2,     3,     4,     0,
-     5,     6,     7,    32,    33,    34,    35,     0,     0,     0,
-     8,     1,     2,     3,     4,     0,     0,     0,     0,     0,
-     0,     0,     0,     0,     0,     0,     8
+    20,    39,    22,     1,     2,     3,     4,    38,    41,     5,
+     6,     7,    46,     1,    46,     1,    42,    43,    21,    39,
+    40,    70,     8,    60,    71,    66,    41,    61,    45,    60,
+    46,    49,    67,    64,    65,     1,     2,     3,     4,    54,
+     0,     5,     6,     7,    47,    59,    47,    50,     1,     2,
+     3,     4,    52,     0,     8,    53,    23,    68,     1,     2,
+     3,     4,    63,     0,     5,     6,     7,     8,    26,    27,
+    28,    29,    30,    31,     0,    55,    37,     8,    56,     5,
+     6,     7,    32,    33,    34,    35,    26,    27,    28,    29,
+    30,    31,    26,    27,    28,    29,    30,    31,     0,    51,
+    32,    33,    34,    35,     0,    57,    32,    33,    34,    35,
+    26,    27,    28,    29,    30,    31,    58,    24,    25,    56,
+     0,     0,     0,     0,    32,    33,    34,    35
 };
 
 static const short yycheck[] = {    10,
-     8,    18,     9,     3,     4,     5,     6,     3,     8,     9,
-    10,    38,    38,    40,    40,    17,    24,    25,    18,    17,
-    18,    21,    24,     3,    17,    18,    24,     7,    36,    56,
-    56,    39,    60,    58,     0,     3,     4,     5,     6,    46,
-     8,     9,    10,    20,    20,    53,    19,    24,    24,    22,
-    18,     0,    19,    21,    40,    22,    67,    11,    12,    13,
-    14,    15,    16,    19,    -1,    19,    22,     8,     9,    10,
-    -1,    25,    26,    27,    28,    11,    12,    13,    14,    15,
-    16,    11,    12,    13,    14,    15,    16,    -1,    24,    25,
-    26,    27,    28,    -1,    24,    25,    26,    27,    28,    11,
-    12,    13,    14,    15,    16,     3,     4,     5,     6,    -1,
-     8,     9,    10,    25,    26,    27,    28,    -1,    -1,    -1,
-    18,     3,     4,     5,     6,    -1,    -1,    -1,    -1,    -1,
-    -1,    -1,    -1,    -1,    -1,    -1,    18
+     8,    21,     9,     3,     4,     5,     6,    22,    28,     9,
+    10,    11,    38,     3,    40,     3,    24,    25,     8,    21,
+    22,     0,    22,    24,     0,    25,    28,    28,    36,    24,
+    56,    39,    60,    28,    58,     3,     4,     5,     6,    46,
+    -1,     9,    10,    11,    38,    53,    40,    40,     3,     4,
+     5,     6,    23,    -1,    22,    26,    67,    25,     3,     4,
+     5,     6,    56,    -1,     9,    10,    11,    22,    15,    16,
+    17,    18,    19,    20,    -1,    23,    23,    22,    26,     9,
+    10,    11,    29,    30,    31,    32,    15,    16,    17,    18,
+    19,    20,    15,    16,    17,    18,    19,    20,    -1,    28,
+    29,    30,    31,    32,    -1,    28,    29,    30,    31,    32,
+    15,    16,    17,    18,    19,    20,    23,    21,    22,    26,
+    -1,    -1,    -1,    -1,    29,    30,    31,    32
 };
 /* -*-C-*-  Note some compilers choke on comments on `#line' lines.  */
-#line 3 "bison.simple"
+
 
 /* Skeleton output parser for bison,
    Copyright (C) 1984, 1989, 1990 Free Software Foundation, Inc.
@@ -462,7 +472,7 @@ __yy_memcpy (char *from, char *to, int count)
 #endif
 #endif
 
-#line 192 "bison.simple"
+
 
 /* The user can define YYPARSE_PARAM as the name of an argument to be passed
    into yyparse.  The argument should have type void *.
@@ -761,138 +771,108 @@ yyreduce:
   switch (yyn) {
 
 case 1:
-#line 78 "c:\dropbox\minic\minic\grammar/c.y"
-{ yyval.data_type = new NDataType(C_INT, lineNo); delete yyvsp[0].string; ;
+{ yyval.data_type = new DataType(C_INT, lineNo); delete yyvsp[0].string; ;
     break;}
 case 2:
-#line 79 "c:\dropbox\minic\minic\grammar/c.y"
-{ yyval.data_type = new NDataType(C_FLOAT, lineNo); delete yyvsp[0].string; ;
+{ yyval.data_type = new DataType(C_FLOAT, lineNo); delete yyvsp[0].string; ;
     break;}
 case 3:
-#line 80 "c:\dropbox\minic\minic\grammar/c.y"
-{ yyval.data_type = new NDataType(C_DOUBLE, lineNo); delete yyvsp[0].string; ;
+{ yyval.data_type = new DataType(C_DOUBLE, lineNo); delete yyvsp[0].string; ;
     break;}
 case 4:
-#line 83 "c:\dropbox\minic\minic\grammar/c.y"
 { pProgramBlock = yyvsp[0].block; ;
     break;}
 case 5:
-#line 86 "c:\dropbox\minic\minic\grammar/c.y"
-{ yyval.block = new NBlock(lineNo); yyval.block->AddStatement(yyvsp[0].stmt); ;
+{ yyval.block = new Block(lineNo); yyval.block->AddStmt(yyvsp[0].stmt); ;
     break;}
 case 6:
-#line 87 "c:\dropbox\minic\minic\grammar/c.y"
-{ yyvsp[-1].block->AddStatement(yyvsp[0].stmt); ;
+{ yyvsp[-1].block->AddStmt(yyvsp[0].stmt); ;
     break;}
 case 12:
-#line 95 "c:\dropbox\minic\minic\grammar/c.y"
-{ yyval.stmt = new NExpressionStatement(yyvsp[0].expr, lineNo); ;
+{ yyval.stmt = new ExprStmt(yyvsp[0].expr, lineNo); ;
     break;}
 case 13:
-#line 98 "c:\dropbox\minic\minic\grammar/c.y"
 { yyval.block = yyvsp[-1].block; ;
     break;}
 case 14:
-#line 99 "c:\dropbox\minic\minic\grammar/c.y"
-{ yyval.block = new NBlock(lineNo); ;
+{ yyval.block = new Block(lineNo); ;
     break;}
 case 15:
-#line 102 "c:\dropbox\minic\minic\grammar/c.y"
-{ yyval.stmt = new NVariable(yyvsp[-2].data_type, yyvsp[-1].ident, lineNo); ;
+{ yyval.stmt = new Variable(yyvsp[-2].data_type, yyvsp[-1].ident, lineNo); ;
     break;}
 case 16:
-#line 103 "c:\dropbox\minic\minic\grammar/c.y"
-{ yyval.stmt = new NVariable(yyvsp[-4].data_type, yyvsp[-3].ident, yyvsp[-1].expr, lineNo); ;
+{ yyval.stmt = new Variable(yyvsp[-4].data_type, yyvsp[-3].ident, yyvsp[-1].expr, lineNo); ;
     break;}
 case 18:
-#line 108 "c:\dropbox\minic\minic\grammar/c.y"
 {
-				std::cout << "Errorrrrrrrrrrrrrrrrrrrrrr" << std::endl;
-				yyerror("WARNING: Main Declaration not allowed\n");
-			;
+                std::cout << "Errorrrrrrrrrrrrrrrrrrrrrr" << std::endl;
+                yyerror("WARNING: Main Declaration not allowed\n");
+            ;
     break;}
 case 19:
-#line 115 "c:\dropbox\minic\minic\grammar/c.y"
 { 
-                pMain = new NMainDefinition(yyvsp[-5].data_type, *yyvsp[-2].varvec, yyvsp[0].block, lineNo); 
+                pMain = new MainDefn(yyvsp[-5].data_type, *yyvsp[-2].varvec, yyvsp[0].block, lineNo); 
                 yyval.stmt = pMain; 
             ;
     break;}
 case 20:
-#line 122 "c:\dropbox\minic\minic\grammar/c.y"
 { 
-                yyval.stmt = new NFunctionDeclaration(yyvsp[-5].data_type, yyvsp[-4].ident, *yyvsp[-2].varvec, lineNo);
+                yyval.stmt = new FuncDecl(yyvsp[-5].data_type, yyvsp[-4].ident, *yyvsp[-2].varvec, lineNo);
             ;
     break;}
 case 21:
-#line 128 "c:\dropbox\minic\minic\grammar/c.y"
 { 
-                yyval.stmt = new NFunctionDefinition(yyvsp[-5].data_type, yyvsp[-4].ident, *yyvsp[-2].varvec, yyvsp[0].block, lineNo);
+                yyval.stmt = new FuncDefn(yyvsp[-5].data_type, yyvsp[-4].ident, *yyvsp[-2].varvec, yyvsp[0].block, lineNo);
             ;
     break;}
 case 22:
-#line 133 "c:\dropbox\minic\minic\grammar/c.y"
 { yyval.varvec = new VariableList(lineNo); ;
     break;}
 case 23:
-#line 134 "c:\dropbox\minic\minic\grammar/c.y"
 { yyval.varvec = new VariableList(); yyval.varvec->push_back(yyvsp[0].var_decl); ;
     break;}
 case 24:
-#line 135 "c:\dropbox\minic\minic\grammar/c.y"
 { yyvsp[-2].varvec->push_back(yyvsp[0].var_decl); ;
     break;}
 case 25:
-#line 138 "c:\dropbox\minic\minic\grammar/c.y"
-{ yyval.ident = new NIdentifier(*yyvsp[0].string, lineNo); ;
+{ yyval.ident = new Identifier(*yyvsp[0].string, lineNo); ;
     break;}
 case 26:
-#line 141 "c:\dropbox\minic\minic\grammar/c.y"
-{ yyval.expr = new NInteger(atol(yyvsp[0].string->c_str()), lineNo); ;
+{ yyval.expr = new Integer(atol(yyvsp[0].string->c_str()), lineNo); ;
     break;}
 case 27:
-#line 142 "c:\dropbox\minic\minic\grammar/c.y"
-{ yyval.expr = new NDouble(atof(yyvsp[0].string->c_str()), lineNo); ;
+{ yyval.expr = new Double(atof(yyvsp[0].string->c_str()), lineNo); ;
     break;}
 case 28:
-#line 143 "c:\dropbox\minic\minic\grammar/c.y"
-{ yyval.expr = new NFloat(atof(yyvsp[0].string->c_str()), lineNo); ;
+{ yyval.expr = new Float(atof(yyvsp[0].string->c_str()), lineNo); ;
     break;}
 case 29:
-#line 146 "c:\dropbox\minic\minic\grammar/c.y"
-{ yyval.expr = new NAssignment(yyvsp[-3].ident, yyvsp[-1].expr, lineNo); ;
+{ yyval.expr = new Assignment(yyvsp[-3].ident, yyvsp[-1].expr, lineNo); ;
     break;}
 case 30:
-#line 147 "c:\dropbox\minic\minic\grammar/c.y"
-{ yyval.expr = new NMethodCall(yyvsp[-3].ident, *yyvsp[-1].exprvec, lineNo); ;
+{ yyval.expr = new FunctionCall(yyvsp[-3].ident, *yyvsp[-1].exprvec, lineNo); ;
     break;}
 case 31:
-#line 148 "c:\dropbox\minic\minic\grammar/c.y"
 { yyval.ident = yyvsp[0].ident; ;
     break;}
 case 33:
-#line 150 "c:\dropbox\minic\minic\grammar/c.y"
-{ yyval.expr = new NBinaryOperator(yyvsp[-2].expr, yyvsp[-1].token, yyvsp[0].expr, lineNo); ;
+{ yyval.expr = new BinaryOperator(yyvsp[-2].expr, yyvsp[-1].token, yyvsp[0].expr, lineNo); ;
     break;}
 case 34:
-#line 151 "c:\dropbox\minic\minic\grammar/c.y"
 { yyval.expr = yyvsp[-1].expr; ;
     break;}
 case 35:
-#line 154 "c:\dropbox\minic\minic\grammar/c.y"
-{ yyval.exprvec = new ExpressionList(lineNo); ;
+{ yyval.exprvec = new ExprList(lineNo); ;
     break;}
 case 36:
-#line 155 "c:\dropbox\minic\minic\grammar/c.y"
-{ yyval.exprvec = new ExpressionList(lineNo); yyval.exprvec->push_back(yyvsp[0].expr); ;
+{ yyval.exprvec = new ExprList(lineNo); yyval.exprvec->push_back(yyvsp[0].expr); ;
     break;}
 case 37:
-#line 156 "c:\dropbox\minic\minic\grammar/c.y"
 { yyvsp[-2].exprvec->push_back(yyvsp[0].expr); ;
     break;}
 }
    /* the action file gets copied in in place of this dollarsign */
-#line 487 "bison.simple"
+
 
   yyvsp -= yylen;
   yyssp -= yylen;
@@ -1088,4 +1068,3 @@ yyerrhandle:
   yystate = yyn;
   goto yynewstate;
 }
-#line 163 "c:\dropbox\minic\minic\grammar/c.y"

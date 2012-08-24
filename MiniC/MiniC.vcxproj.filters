@@ -55,11 +55,11 @@
     <ClInclude Include="include\logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\sym_table.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\parser.h">
       <Filter>Generated</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utils.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

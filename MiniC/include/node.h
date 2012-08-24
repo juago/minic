@@ -411,7 +411,55 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+class NullStmt : public Stmt
+{
+public:
+    NullStmt(ull lineNo) : Stmt(lineNo)
+    {
+    }
+};
 
+class IfStmt : public Stmt
+{
+protected:
+    Expr* m_pCond;
+    Stmt* m_pThenStmt;
+    Stmt* m_pElseStmt;
+
+public:
+    IfStmt(Expr* pCond, Stmt* pThen, ull lineNo) : m_pCond(pCond), m_pThenStmt(pThen), Stmt(lineNo)
+    {
+    }
+
+    IfStmt(Expr* pCond, Stmt* pThen, Stmt* pElse, ull lineNo) : m_pCond(pCond), m_pThenStmt(pThen), m_pElseStmt(pElse), Stmt(lineNo)
+    {
+    }
+};
+
+class WhileStmt : public Stmt
+{
+protected:
+    Expr* m_pCond;
+    Stmt* m_pStmt;
+
+public:
+    WhileStmt(Expr* pCond, Stmt* pStmt, ull lineNo) : m_pCond(pCond), m_pStmt(pStmt), Stmt(lineNo)
+    {
+    }
+};
+
+class ReturnStmt : public Stmt
+{
+protected:
+    Expr* m_pReturnExpr;
+
+public:
+    ReturnStmt(Expr* pReturnExpr, ull lineNo) : m_pReturnExpr(pReturnExpr), Stmt(lineNo)
+    {
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class ExprStmt : public Stmt
 {
 private:
@@ -502,15 +550,6 @@ public:
                         arguments, block, lineNo) 
     {
         Log().Get(logINFO) << "Creating MainDefn" << std::endl;  
-    }
-};
-
-class NConditionalExpr : public Stmt
-{
-public:
-    NConditionalExpr(ull lineNo) : Stmt(lineNo) 
-    {
-        Log().Get(logINFO) << "Creating NConditionalExpr" << std::endl;  
     }
 };
 

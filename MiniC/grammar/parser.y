@@ -103,19 +103,27 @@
 %type <stmt> main_defn 
 %type <stmt> func_decl 
 %type <stmt> func_defn
+%type <stmt> stmt 
+%type <stmt> var_decl
+%type <stmt> if_stmt
+%type <stmt> while_stmt
+%type <stmt> return_stmt
+
 %type <ident> ident
+
 %type <expr> numeric 
 %type <expr> expr
 %type <expr> ops_expr
 %type <expr> comparison_expr
 %type <expr> unary_expr
+
 %type <varvec> func_args
 %type <exprvec> call_args
+
 %type <block> program 
 %type <block> stmts 
 %type <block> block
-%type <stmt> stmt 
-%type <stmt> var_decl
+
 %type <data_type> data_type
 
 /* Operator precedence for mathematical operators */
@@ -151,7 +159,11 @@ stmt : var_decl
      | func_decl 
      | func_defn 
      | main_defn
-     | expr                                         { $$ = new ExprStmt($1, lineNo); }
+     | if_stmt                                      { $$ = $1; }
+     | while_stmt                                   { $$ = $1; }
+     | return_stmt                                  { $$ = $1; }
+     | expr SEMICOLON                               { $$ = new ExprStmt($1, lineNo); }
+     | SEMICOLON                                    { $$ = new NullStmt(lineNo); }
      ;
 
 block : LBRACE stmts RBRACE                         { $$ = $2; }
@@ -238,5 +250,16 @@ call_args : /*blank*/                       { $$ = new ExprList(lineNo); }
           | expr                            { $$ = new ExprList(lineNo); $$->push_back($1); }
           | call_args COMMA expr            { $1->push_back($3); }
           ;
+
+if_stmt : IF LPAREN expr RPAREN stmt                { $$ = new IfStmt($3, $5, NULL, lineNo); }
+        | IF LPAREN expr RPAREN stmt ELSE stmt      { $$ = new IfStmt($3, $5, $7, lineNo); }
+        ;
+
+while_stmt : WHILE LPAREN expr RPAREN stmt          { $$ = new WhileStmt($3, $5, lineNo); }
+           ;
+
+return_stmt : RETURN SEMICOLON                      { $$ = new ReturnStmt(NULL, lineNo); }
+            | RETURN expr SEMICOLON                 { $$ = new ReturnStmt($2, lineNo); }
+            ;
 
 %%

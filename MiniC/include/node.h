@@ -176,23 +176,23 @@ public:
     }
 };
 
-class BinaryOperator : public Expr
-{
-private:
-    int          m_op;
-    Expr* m_pLhs;
-    Expr* m_pRhs;
-
-public:
-    BinaryOperator(Expr* pLhs, 
-                    int op, 
-                    Expr* pRhs,
-                    ull lineNo) :
-    m_pLhs(pLhs), m_pRhs(pRhs), m_op(op), Expr(lineNo)
-    {
-        Log().Get(logINFO) << "Creating BinaryOperator" << std::endl;  
-    }
-};
+//class BinaryOperator : public Expr
+//{
+//private:
+//    int          m_op;
+//    Expr* m_pLhs;
+//    Expr* m_pRhs;
+//
+//public:
+//    BinaryOperator(Expr* pLhs, 
+//                    int op, 
+//                    Expr* pRhs,
+//                    ull lineNo) :
+//    m_pLhs(pLhs), m_pRhs(pRhs), m_op(op), Expr(lineNo)
+//    {
+//        Log().Get(logINFO) << "Creating BinaryOperator" << std::endl;  
+//    }
+//};
 
 class Assignment : public Expr
 {
@@ -295,26 +295,26 @@ public:
     }
 };
 
-class SubtractioBinaryExpr : public NumberBinaryExpr
+class SubtractionBinaryExpr : public NumberBinaryExpr
 {
 public:
-    SubtractioBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : NumberBinaryExpr(pLhs, pRhs, lineNo)
+    SubtractionBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : NumberBinaryExpr(pLhs, pRhs, lineNo)
     {
     }
 };
 
-class MultiplicatioBinaryExpr : public NumberBinaryExpr
+class MultiplicationBinaryExpr : public NumberBinaryExpr
 {
 public:
-    MultiplicatioBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : NumberBinaryExpr(pLhs, pRhs, lineNo)
+    MultiplicationBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : NumberBinaryExpr(pLhs, pRhs, lineNo)
     {
     }
 };
 
-class DivisioBinaryExpr : public NumberBinaryExpr
+class DivisionBinaryExpr : public NumberBinaryExpr
 {
 public:
-    DivisioBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : NumberBinaryExpr(pLhs, pRhs, lineNo)
+    DivisionBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : NumberBinaryExpr(pLhs, pRhs, lineNo)
     {
     }
 };
@@ -394,10 +394,10 @@ public:
     }
 };
 
-class EqCompareBinaryExpr : public CompareBinaryExpr
+class EQCompareBinaryExpr : public CompareBinaryExpr
 {
 public:
-    EqCompareBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : CompareBinaryExpr(pLhs, pRhs, lineNo)
+    EQCompareBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : CompareBinaryExpr(pLhs, pRhs, lineNo)
     {
     }
 };
@@ -435,17 +435,17 @@ private:
 
 public:
     Variable(const DataType* dataType, 
-              Identifier* pId,
-              ull lineNo) : 
+             Identifier* pId,
+             ull lineNo) : 
     m_datatype(dataType), m_pId(pId), m_pAssignmentExpr(NULL), Stmt(lineNo) 
     {
         Log().Get(logINFO) << "Creating Variable" << std::endl;  
     }
 
     Variable(const DataType* dataType,
-              Identifier* pId,
-              Expr* assignmentExpr,
-              ull lineNo) :
+             Identifier* pId,
+             Expr* assignmentExpr,
+             ull lineNo) :
     m_datatype(dataType), m_pId(pId), m_pAssignmentExpr(assignmentExpr), Stmt(lineNo) 
     {
         Log().Get(logINFO) << "Creating Variable" << std::endl;  

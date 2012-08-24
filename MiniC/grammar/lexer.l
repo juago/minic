@@ -78,6 +78,9 @@ void ignore_c_comments()
 "true"                  { SAVE_TOKEN; return BOOL_LITERAL; }
 "false"                 { SAVE_TOKEN; return BOOL_LITERAL; }
 
+"!"                     { return TOKEN(NOT); }
+"~"                     { return TOKEN(TILDA); }
+
 "="						{ return TOKEN(EQUAL); }
 "=="					{ return TOKEN(CEQ); }
 "!="					{ return TOKEN(CNE); }
@@ -95,9 +98,12 @@ void ignore_c_comments()
 "-"						{ return TOKEN(MINUS); }
 "*"						{ return TOKEN(MUL); }
 "/"						{ return TOKEN(DIV); }
-"%"                     { return TOKEN(MODULUS); }
+"%"                     { return TOKEN(MOD); }
 "<<"                    { return TOKEN(LSHIFT); }
 ">>"                    { return TOKEN(RSHIFT); }
+
+"!"                     { return TOKEN(NOT); }
+
 
 "."						{ return TOKEN(DOT); }
 ","						{ return TOKEN(COMMA); }

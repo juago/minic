@@ -42,13 +42,24 @@ typedef union
 #define	MINUS	285
 #define	MUL	286
 #define	DIV	287
-#define	MODULUS	288
+#define	MOD	288
 #define	LSHIFT	289
 #define	RSHIFT	290
-#define	IF	291
-#define	ELSE	292
-#define	WHILE	293
-#define	RETURN	294
+#define	NOT	291
+#define	TILDA	292
+#define	IF	293
+#define	ELSE	294
+#define	WHILE	295
+#define	RETURN	296
+#define	OR	297
+#define	AND	298
+#define	LE	299
+#define	LT	300
+#define	GT	301
+#define	GE	302
+#define	EQ	303
+#define	NE	304
+#define	UNARY_OP	305
 
 
 extern YYSTYPE yylval;

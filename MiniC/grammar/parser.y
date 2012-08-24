@@ -81,9 +81,11 @@
 %token <token> MINUS 
 %token <token> MUL 
 %token <token> DIV
-%token <token> MODULUS
+%token <token> MOD
 %token <token> LSHIFT
 %token <token> RSHIFT
+%token <token> NOT
+%token <token> TILDA
 
 /* Conditions branches */
 %token <token> IF 
@@ -103,7 +105,10 @@
 %type <stmt> func_defn
 %type <ident> ident
 %type <expr> numeric 
-%type <expr> expr 
+%type <expr> expr
+%type <expr> ops_expr
+%type <expr> comparison_expr
+%type <expr> unary_expr
 %type <varvec> func_args
 %type <exprvec> call_args
 %type <block> program 
@@ -111,27 +116,34 @@
 %type <block> block
 %type <stmt> stmt 
 %type <stmt> var_decl
-%type <token> comparison
 %type <data_type> data_type
 
 /* Operator precedence for mathematical operators */
+%right EQUAL
+%left OR
+%left AND
+%nonassoc LE LT GT GE EQ NE
 %left PLUS MINUS
-%left MUL DIV
+%left MUL DIV MOD
+%right UNARY_OP
 
 %start program
 
 %%
 
-data_type : INT    { $$ = new DataType(C_INT, lineNo); delete $1; }
-          | FLOAT  { $$ = new DataType(C_FLOAT, lineNo); delete $1; }
-          | DOUBLE { $$ = new DataType(C_DOUBLE, lineNo); delete $1; }
+data_type : INT                                     { $$ = new DataType(C_INT, lineNo); delete $1; }
+          | FLOAT                                   { $$ = new DataType(C_FLOAT, lineNo); delete $1; }
+          | DOUBLE                                  { $$ = new DataType(C_DOUBLE, lineNo); delete $1; }
+          | BOOL                                    { $$ = new DataType(C_BOOL, lineNo); delete $1; }
+          | CHAR                                    { $$ = new DataType(C_CHAR, lineNo); delete $1; }
+          | VOID                                    { $$ = new DataType(C_VOID, lineNo); delete $1; }
           ;
 
-program : stmts { pProgramBlock = $1; }
+program : stmts                                     { pProgramBlock = $1; }
         ;
         
-stmts : stmt { $$ = new Block(lineNo); $$->AddStmt($<stmt>1); }
-      | stmts stmt { $1->AddStmt($<stmt>2); }
+stmts : stmt                                        { $$ = new Block(lineNo); $$->AddStmt($<stmt>1); }
+      | stmts stmt                                  { $1->AddStmt($<stmt>2); }
       ;
 
 stmt : var_decl 
@@ -139,16 +151,16 @@ stmt : var_decl
      | func_decl 
      | func_defn 
      | main_defn
-     | expr { $$ = new ExprStmt($1, lineNo); }
+     | expr                                         { $$ = new ExprStmt($1, lineNo); }
      ;
 
-block : LBRACE stmts RBRACE { $$ = $2; }
-      | LBRACE RBRACE { $$ = new Block(lineNo); }
+block : LBRACE stmts RBRACE                         { $$ = $2; }
+      | LBRACE RBRACE                               { $$ = new Block(lineNo); }
       ;
 
-var_decl : data_type ident SEMICOLON { $$ = new Variable($1, $2, lineNo); }
-         | data_type ident EQUAL expr SEMICOLON { $$ = new Variable($1, $2, $4, lineNo); }
-         | data_type ident
+var_decl : data_type ident SEMICOLON                { $$ = new Variable($1, $2, lineNo); }
+         | data_type ident EQUAL expr SEMICOLON     { $$ = new Variable($1, $2, $4, lineNo); }
+         | data_type ident                          { $$ = new Variable($1, $2, lineNo); }
          ;
 
 main_decl : data_type MAIN LPAREN func_args RPAREN SEMICOLON 
@@ -177,34 +189,54 @@ func_defn : data_type ident LPAREN func_args RPAREN block
             }
           ;	
                   
-func_args : /*blank*/  { $$ = new VariableList(lineNo); }
-          | var_decl { $$ = new VariableList(); $$->push_back($<var_decl>1); }
-          | func_args COMMA var_decl { $1->push_back($<var_decl>3); }
+func_args : /*blank*/                       { $$ = new VariableList(lineNo); }
+          | var_decl                        { $$ = new VariableList(); $$->push_back($<var_decl>1); }
+          | func_args COMMA var_decl        { $1->push_back($<var_decl>3); }
           ;
 
-ident : IDENTIFIER { $$ = new Identifier(*$1, lineNo); }
+ident : IDENTIFIER                          { $$ = new Identifier(*$1, lineNo); }
       ;
 
-numeric : INTEGER_NUM { $$ = new Integer(atol($1->c_str()), lineNo); }
-        | DOUBLE_NUM  { $$ = new Double(atof($1->c_str()), lineNo); }
-        | FLOAT_NUM   { $$ = new Float(atof($1->c_str()), lineNo); }
+numeric : INTEGER_NUM                       { $$ = new Integer(atol($1->c_str()), lineNo); }
+        | DOUBLE_NUM                        { $$ = new Double(atof($1->c_str()), lineNo); }
+        | FLOAT_NUM                         { $$ = new Float(atof($1->c_str()), lineNo); }
         ;
-    
-expr : ident EQUAL expr SEMICOLON { $$ = new Assignment($<ident>1, $3, lineNo); }
-     | ident LPAREN call_args RPAREN { $$ = new FunctionCall($1, *$3, lineNo); }
-     | ident { $<ident>$ = $1; }
+
+
+ops_expr  : expr PLUS expr                  { $$ = new AdditionBinaryExpr($1, $3, lineNo); }
+          | expr MINUS expr                 { $$ = new SubtractionBinaryExpr($1, $3, lineNo); }
+          | expr MUL expr                   { $$ = new MultiplicationBinaryExpr($1, $3, lineNo); }
+          | expr DIV expr                   { $$ = new DivisionBinaryExpr($1, $3, lineNo); }
+          | expr MOD expr                   { $$ = new ModulusBinaryExpr($1, $3, lineNo); }
+
+comparison_expr : expr OR expr              { $$ = new OrBinaryExpr($1, $3, lineNo); }
+                | expr AND expr             { $$ = new AndBinaryExpr($1, $3, lineNo); }
+                | expr EQ expr              { $$ = new EQCompareBinaryExpr($1, $3, lineNo); }
+                | expr NE expr              { $$ = new NECompareBinaryExpr($1, $3, lineNo); }
+                | expr LE expr              { $$ = new LECompareBinaryExpr($1, $3, lineNo); }
+                | expr LT expr              { $$ = new LTCompareBinaryExpr($1, $3, lineNo); }
+                | expr GE expr              { $$ = new GECompareBinaryExpr($1, $3, lineNo); }
+                | expr GT expr              { $$ = new GTCompareBinaryExpr($1, $3, lineNo); }
+
+
+unary_expr : NOT expr %prec UNARY_OP        { $$ = new NegateUnaryExpr($2, lineNo); }
+           | PLUS expr %prec UNARY_OP       { $$ = new AdditionUnaryExpr($2, lineNo); }
+           | MINUS expr %prec UNARY_OP      { $$ = new SubtractUnaryExpr($2, lineNo); }
+
+expr : ident EQUAL expr SEMICOLON           { $$ = new Assignment($<ident>1, $3, lineNo); }
+     | ident LPAREN call_args RPAREN        { $$ = new FunctionCall($1, *$3, lineNo); }
+     | ident                                { $<ident>$ = $1; }
+     | ops_expr
+     | comparison_expr
+     | unary_expr
      | numeric
-     | expr comparison expr { $$ = new BinaryOperator($1, $2, $3, lineNo); }
-     | LPAREN expr RPAREN { $$ = $2; }
+     | LPAREN expr RPAREN                   { $$ = $2; }
      ;
     
-call_args : /*blank*/  { $$ = new ExprList(lineNo); }
-          | expr { $$ = new ExprList(lineNo); $$->push_back($1); }
-          | call_args COMMA expr  { $1->push_back($3); }
+call_args : /*blank*/                       { $$ = new ExprList(lineNo); }
+          | VOID                            { $$ = new ExprList(lineNo); }
+          | expr                            { $$ = new ExprList(lineNo); $$->push_back($1); }
+          | call_args COMMA expr            { $1->push_back($3); }
           ;
-
-comparison : CEQ | CNE | CLT | CLE | CGT | CGE 
-           | PLUS | MINUS | MUL | DIV
-           ;
 
 %%

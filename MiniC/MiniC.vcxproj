@@ -78,6 +78,7 @@
     <ClCompile Include="src\lexer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\parser.cpp" />
+    <ClCompile Include="src\symbol.cpp" />
     <ClCompile Include="test\1.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -89,6 +90,7 @@
     <ClInclude Include="include\logger.h" />
     <ClInclude Include="include\node.h" />
     <ClInclude Include="include\parser.h" />
+    <ClInclude Include="include\symbol.h" />
     <ClInclude Include="include\utils.h" />
   </ItemGroup>
   <ItemGroup>

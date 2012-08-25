@@ -47,6 +47,9 @@
     <ClCompile Include="test\2.c">
       <Filter>Test</Filter>
     </ClCompile>
+    <ClCompile Include="src\symbol.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\node.h">
@@ -59,6 +62,9 @@
       <Filter>Generated</Filter>
     </ClInclude>
     <ClInclude Include="include\utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\symbol.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -81,6 +81,8 @@ public:
     {
         Log().Get(logINFO) << "Creating Identifier: " << m_name << std::endl;
     }
+
+    std::string getName() const { return m_name; }
 };
 
 class Stmt : public Node

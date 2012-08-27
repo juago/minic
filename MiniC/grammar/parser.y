@@ -3,11 +3,14 @@
     #include <cstdlib>
 
     #include "node.h"
+	#include "symbol.h"
 
     using namespace std;
 
     Block*    pProgramBlock; /* the top level root node of our final AST */
     MainDefn* pMain;
+
+	SymbolTableMgr* pSymbolTableMgr = new SymbolTableMgr();
 
     extern int yylex();
     extern unsigned int lineNo;
@@ -139,12 +142,12 @@
 
 %%
 
-data_type : INT                                     { $$ = new DataType(C_INT, lineNo); delete $1; }
-          | FLOAT                                   { $$ = new DataType(C_FLOAT, lineNo); delete $1; }
-          | DOUBLE                                  { $$ = new DataType(C_DOUBLE, lineNo); delete $1; }
-          | BOOL                                    { $$ = new DataType(C_BOOL, lineNo); delete $1; }
-          | CHAR                                    { $$ = new DataType(C_CHAR, lineNo); delete $1; }
-          | VOID                                    { $$ = new DataType(C_VOID, lineNo); delete $1; }
+data_type : INT                                     { $$ = new DataType(_INT_, lineNo); delete $1; }
+          | FLOAT                                   { $$ = new DataType(_FLOAT_, lineNo); delete $1; }
+          | DOUBLE                                  { $$ = new DataType(_DOUBLE_, lineNo); delete $1; }
+          | BOOL                                    { $$ = new DataType(_BOOL_, lineNo); delete $1; }
+          | CHAR                                    { $$ = new DataType(_CHAR_, lineNo); delete $1; }
+          | VOID                                    { $$ = new DataType(_VOID_, lineNo); delete $1; }
           ;
 
 program : stmts                                     { pProgramBlock = $1; }
@@ -166,18 +169,19 @@ stmt : var_decl
      | SEMICOLON                                    { $$ = new NullStmt(lineNo); }
      ;
 
-block : LBRACE stmts RBRACE                         { $$ = $2; }
+block : LBRACE                                      { pSymbolTableMgr->enterScope(); }
+        stmts										{ $$ = $3 }
+		RBRACE                                      { pSymbolTableMgr->leaveScope(); }
       | LBRACE RBRACE                               { $$ = new Block(lineNo); }
       ;
 
-var_decl : data_type ident SEMICOLON                { $$ = new Variable($1, $2, lineNo); }
-         | data_type ident EQUAL expr SEMICOLON     { $$ = new Variable($1, $2, $4, lineNo); }
-         | data_type ident                          { $$ = new Variable($1, $2, lineNo); }
+var_decl : data_type ident SEMICOLON                { $$ = new Variable($1, $2, lineNo); pSymbolTableMgr->insertVariableEntry($$, $1); }
+         | data_type ident EQUAL expr SEMICOLON     { $$ = new Variable($1, $2, $4, lineNo); pSymbolTableMgr->insertVariableEntry($$, $1); }
+         | data_type ident                          { $$ = new Variable($1, $2, lineNo); pSymbolTableMgr->insertVariableEntry($$, $1); }
          ;
 
 main_decl : data_type MAIN LPAREN func_args RPAREN SEMICOLON 
             {
-                std::cout << "Errorrrrrrrrrrrrrrrrrrrrrr" << std::endl;
                 yyerror("WARNING: Main Declaration not allowed\n");
             }
           ;
@@ -192,12 +196,14 @@ main_defn : data_type MAIN LPAREN func_args RPAREN block
 func_decl : data_type ident LPAREN func_args RPAREN SEMICOLON 
             { 
                 $$ = new FuncDecl($1, $2, *$4, lineNo);
+				pSymbolTableMgr->insertFunctionEntry($$, *$4, $1);
             }
           ;
 
 func_defn : data_type ident LPAREN func_args RPAREN block 
             { 
                 $$ = new FuncDefn($1, $2, *$4, $6, lineNo);
+				pSymbolTableMgr->insertFunctionEntry($$, *$4, $1);
             }
           ;	
                   
@@ -211,7 +217,7 @@ ident : IDENTIFIER                          { $$ = new Identifier(*$1, lineNo); 
 
 numeric : INTEGER_NUM                       { $$ = new Integer(atol($1->c_str()), lineNo); }
         | DOUBLE_NUM                        { $$ = new Double(atof($1->c_str()), lineNo); }
-        | FLOAT_NUM                         { $$ = new Float(atof($1->c_str()), lineNo); }
+        | FLOAT_NUM                         { $$ = new Float((float)(atof($1->c_str())), lineNo); }
         ;
 
 

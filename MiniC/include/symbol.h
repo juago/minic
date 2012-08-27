@@ -4,14 +4,32 @@
 #include "utils.h"
 #include "node.h"
 
+class SymbolTable;
 class SymbolEntry;
 class FunctionEntry;
 class VariableEntry;
+
+class SymbolTableMgr
+{
+private:
+    SymbolTable* m_pCurrentSymbolTable;
+    SymbolTable* m_pGlobalSymbolTable;
+
+public:
+    SymbolTableMgr();
+    ~SymbolTableMgr();
+
+    void enterScope();
+    void leaveScope();
+    bool insertFunctionEntry(Stmt* pStmt, std::vector<Variable*> args, DataType* pReturnType);
+    bool insertVariableEntry(Stmt* pStmt, DataType* pType);
+};
 
 class SymbolTable
 {
 protected:
     std::map<std::string, SymbolEntry*, std::less<std::string> > m_entries;
+    std::vector<SymbolTable*>                                    m_symbolTableEntries;
     SymbolTable*                                                 m_pParent;
     int                                                          m_currentOffset;
     int                                                          m_maxLocalCount;
@@ -19,10 +37,10 @@ protected:
 
 public:
     SymbolTable(SymbolTable* pParent);
-    FunctionEntry* getFunctionEntry(Identifier* pIdent);
-    VariableEntry* getVariableEntry(Identifier* pIdent);
-    bool insertFunctionEntry(Identifier* pIdent_, std::vector<EnumDataType> args, EnumDataType returnType);
-    bool insertVariableEntry(Identifier* pIdent_, EnumDataType type);
+    FunctionEntry* getFunctionEntry(Stmt* pStmt);
+    VariableEntry* getVariableEntry(Stmt* pStmt);
+    bool insertFunctionEntry(Stmt* pStmt, std::vector<Variable*> args, DataType* pReturnType);
+    bool insertVariableEntry(Stmt* pStmt, DataType* pType);
     int getOffset();
     int getNewOffset();
     SymbolTable* getParent();
@@ -34,11 +52,11 @@ public:
 class SymbolEntry
 {
 protected:
-    Identifier*  m_pIdent;
-    EnumDataType m_type;
+    Stmt*  m_pStmt;
+    DataType* m_pType;
 
 public:
-    SymbolEntry(Identifier* pIdent, EnumDataType type) : m_pIdent(pIdent), m_type(type)
+    SymbolEntry(Stmt* pStmt, DataType* pType) : m_pStmt(pStmt), m_pType(pType)
     {
     }
 
@@ -46,18 +64,18 @@ public:
     {
     }
 
-    EnumDataType getType();
+    DataType* getType();
 };
 
 class FunctionEntry : public SymbolEntry
 {
 protected:
-    EnumDataType              m_returnType;
-    std::vector<EnumDataType> m_args;
+    DataType*                 m_pReturnType;
+    std::vector<Variable*>    m_args;
 
 public:
-    FunctionEntry(Identifier* pIdent, std::vector<EnumDataType> args, EnumDataType returnType);
-    std::vector<EnumDataType> getArgs();
+    FunctionEntry(Stmt* pStmt, std::vector<Variable*> args, DataType* pReturnType);
+    std::vector<Variable*> getArgs();
 };
 
 class VariableEntry : public SymbolEntry
@@ -67,7 +85,7 @@ protected:
     bool                      m_global;
 
 public:
-    VariableEntry(Identifier* pIdent, EnumDataType type, bool global, int index);
+    VariableEntry(Stmt* pStmt, DataType* pType, bool global, int index);
     int getIndex();
     bool isGlobal();
 };

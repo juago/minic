@@ -102,9 +102,6 @@ void ignore_c_comments()
 "<<"                    { return TOKEN(LSHIFT); }
 ">>"                    { return TOKEN(RSHIFT); }
 
-"!"                     { return TOKEN(NOT); }
-
-
 "."						{ return TOKEN(DOT); }
 ","						{ return TOKEN(COMMA); }
 ";"                     { return TOKEN(SEMICOLON); }

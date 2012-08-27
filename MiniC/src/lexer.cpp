@@ -285,20 +285,20 @@ static void yy_fatal_error YY_PROTO(( yyconst char msg[] ));
 	*yy_cp = '\0'; \
 	yy_c_buf_p = yy_cp;
 
-#define YY_NUM_RULES 47
-#define YY_END_OF_BUFFER 48
+#define YY_NUM_RULES 46
+#define YY_END_OF_BUFFER 47
 static yyconst short int yy_accept[96] =
     {   0,
-        0,    0,   48,   46,    2,    1,   16,   33,   25,   26,
-       31,   29,   38,   30,   37,   32,   42,   39,   21,   18,
-       23,   43,   43,   43,   43,   43,   43,   43,   43,   43,
-       43,   43,   43,   27,   28,   17,    1,   20,   44,   45,
-       40,   42,   34,   22,   19,   24,   35,   43,   43,   43,
-       43,   43,   43,   43,   10,   43,   43,   43,   43,   43,
-       43,   45,   40,   41,   43,   43,   43,   43,   43,   43,
-        4,   43,   43,   43,   43,   43,    8,    9,   43,   11,
-       43,   43,    3,   43,   14,    7,   43,   43,   15,    6,
-       43,   12,    5,   13,    0
+        0,    0,   47,   45,    2,    1,   16,   33,   25,   26,
+       31,   29,   37,   30,   36,   32,   41,   38,   21,   18,
+       23,   42,   42,   42,   42,   42,   42,   42,   42,   42,
+       42,   42,   42,   27,   28,   17,    1,   20,   43,   44,
+       39,   41,   34,   22,   19,   24,   35,   42,   42,   42,
+       42,   42,   42,   42,   10,   42,   42,   42,   42,   42,
+       42,   44,   39,   40,   42,   42,   42,   42,   42,   42,
+        4,   42,   42,   42,   42,   42,    8,    9,   42,   11,
+       42,   42,    3,   42,   14,    7,   42,   42,   15,    6,
+       42,   12,    5,   13,    0
 
     } ;
 
@@ -886,67 +886,62 @@ YY_RULE_SETUP
 case 36:
 YY_RULE_SETUP
 #line 105 "..\\grammar\\lexer.l"
-{ return TOKEN(NOT); }
+{ return TOKEN(DOT); }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 108 "..\\grammar\\lexer.l"
-{ return TOKEN(DOT); }
+#line 106 "..\\grammar\\lexer.l"
+{ return TOKEN(COMMA); }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 109 "..\\grammar\\lexer.l"
-{ return TOKEN(COMMA); }
+#line 107 "..\\grammar\\lexer.l"
+{ return TOKEN(SEMICOLON); }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 110 "..\\grammar\\lexer.l"
-{ return TOKEN(SEMICOLON); }
+#line 109 "..\\grammar\\lexer.l"
+{ SAVE_TOKEN; return DOUBLE_NUM; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 112 "..\\grammar\\lexer.l"
-{ SAVE_TOKEN; return DOUBLE_NUM; }
+#line 110 "..\\grammar\\lexer.l"
+{ SAVE_TOKEN; return FLOAT_NUM; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 113 "..\\grammar\\lexer.l"
-{ SAVE_TOKEN; return FLOAT_NUM; }
+#line 111 "..\\grammar\\lexer.l"
+{ SAVE_TOKEN; return INTEGER_NUM; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 114 "..\\grammar\\lexer.l"
-{ SAVE_TOKEN; return INTEGER_NUM; }
+#line 113 "..\\grammar\\lexer.l"
+{ SAVE_TOKEN; return IDENTIFIER; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
 #line 116 "..\\grammar\\lexer.l"
-{ SAVE_TOKEN; return IDENTIFIER; }
+{ ignore_c_comments(); } /* slash star style comments  */
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 119 "..\\grammar\\lexer.l"
-{ ignore_c_comments(); } /* slash star style comments  */
+#line 117 "..\\grammar\\lexer.l"
+{;}                      /* slash slash style comments */
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 120 "..\\grammar\\lexer.l"
-{;}                      /* slash slash style comments */
-	YY_BREAK
-case 46:
-YY_RULE_SETUP
-#line 122 "..\\grammar\\lexer.l"
+#line 119 "..\\grammar\\lexer.l"
 { 
                           std::cout << "Unknown token " << 
                           yytext << " on line: " << lineNo << std::endl; yyterminate(); 
                         }
 	YY_BREAK
-case 47:
+case 46:
 YY_RULE_SETUP
-#line 127 "..\\grammar\\lexer.l"
+#line 124 "..\\grammar\\lexer.l"
 ECHO;
 	YY_BREAK
-#line 950 "lexer.cpp"
+#line 945 "lexer.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1806,4 +1801,4 @@ int main()
 	return 0;
 	}
 #endif
-#line 127 "..\\grammar\\lexer.l"
+#line 124 "..\\grammar\\lexer.l"

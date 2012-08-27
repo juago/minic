@@ -1,6 +1,44 @@
 #include "symbol.h"
 #include "logger.h"
 
+SymbolTableMgr::SymbolTableMgr()
+{
+    m_pGlobalSymbolTable = new SymbolTable(NULL);
+    m_pCurrentSymbolTable = m_pGlobalSymbolTable;
+}
+
+void SymbolTableMgr::enterScope()
+{
+    m_pCurrentSymbolTable = new SymbolTable(m_pCurrentSymbolTable);
+}
+
+void SymbolTableMgr::leaveScope()
+{
+    if (m_pCurrentSymbolTable->getParent() != NULL)
+    {
+        // Set the maximum used index of the parent to the child if its greater
+        m_pCurrentSymbolTable->getParent()->setMaxLocalCount(m_pCurrentSymbolTable->getMaxLocalCount());
+
+        // Restore scope to parent
+        m_pCurrentSymbolTable = m_pCurrentSymbolTable->getParent();
+    }
+}
+
+bool SymbolTableMgr::insertFunctionEntry(
+    Stmt* pStmt,
+    std::vector<Variable*> args,
+    DataType* pReturnType)
+{
+    return m_pCurrentSymbolTable->insertFunctionEntry(pStmt, args, pReturnType);
+}
+
+bool SymbolTableMgr::insertVariableEntry(
+    Stmt* pStmt,
+    DataType* pType)
+{
+    return m_pCurrentSymbolTable->insertVariableEntry(pStmt, pType);
+}
+
 SymbolTable::SymbolTable(
     SymbolTable* pParent)
     : m_pParent(pParent),
@@ -19,11 +57,11 @@ SymbolTable::SymbolTable(
 
 // Search the symbol table recursively for the function
 FunctionEntry* SymbolTable::getFunctionEntry(
-    Identifier* pIdent)
+    Stmt* pStmt)
 {
-    Log().Get(logDEBUG) << "Looking for Function: " << pIdent->getName() << std::endl;
+    Log().Get(logDEBUG) << "Looking for Function: " << pStmt->getIdentifier()->getName() << std::endl;
 
-    std::map<std::string, SymbolEntry*>::iterator iter = m_entries.find(pIdent->getName());
+    std::map<std::string, SymbolEntry*>::iterator iter = m_entries.find(pStmt->getIdentifier()->getName());
 
     if (iter != m_entries.end())
     {
@@ -35,7 +73,7 @@ FunctionEntry* SymbolTable::getFunctionEntry(
     {
         if (m_pParent != NULL)
         {
-            return m_pParent->getFunctionEntry(pIdent);
+            return m_pParent->getFunctionEntry(pStmt);
         }
         else
         {
@@ -45,11 +83,11 @@ FunctionEntry* SymbolTable::getFunctionEntry(
 }
 
 VariableEntry* SymbolTable::getVariableEntry(
-    Identifier* pIdent)
+    Stmt* pStmt)
 {
-    Log().Get(logDEBUG) << "Looking for Function: " << pIdent->getName() << std::endl;
+    Log().Get(logDEBUG) << "Looking for Function: " << pStmt->getIdentifier()->getName() << std::endl;
 
-    std::map<std::string, SymbolEntry*>::iterator iter = m_entries.find(pIdent->getName());
+    std::map<std::string, SymbolEntry*>::iterator iter = m_entries.find(pStmt->getIdentifier()->getName());
 
     if (iter != m_entries.end())
     {
@@ -61,7 +99,7 @@ VariableEntry* SymbolTable::getVariableEntry(
     {
         if (m_pParent != NULL)
         {
-            return m_pParent->getVariableEntry(pIdent);
+            return m_pParent->getVariableEntry(pStmt);
         }
         else
         {
@@ -71,25 +109,25 @@ VariableEntry* SymbolTable::getVariableEntry(
 }
 
 bool SymbolTable::insertFunctionEntry(
-    Identifier* pIdent,
-    std::vector<EnumDataType> args,
-    EnumDataType returnType)
+    Stmt* pStmt,
+    std::vector<Variable*> args,
+    DataType* pReturnType)
 {
-    Log().Get(logDEBUG) << "Inserting Function: " << pIdent->getName() << std::endl;
+    Log().Get(logDEBUG) << "Inserting Function: " << pStmt->getIdentifier()->getName() << std::endl;
 
-    FunctionEntry* pNewEntry = new FunctionEntry(pIdent, args, returnType);
+    FunctionEntry* pNewEntry = new FunctionEntry(pStmt, args, pReturnType);
 
     typedef std::pair<std::string, SymbolEntry*> EntryPair;
     std::pair< std::map<std::string, SymbolEntry*>::iterator, bool> pair_return;
 
-    pair_return = m_entries.insert(EntryPair(pIdent->getName(), pNewEntry));
+    pair_return = m_entries.insert(EntryPair(pStmt->getIdentifier()->getName(), pNewEntry));
 
     return pair_return.second;
 }
 
 bool SymbolTable::insertVariableEntry(
-    Identifier* pIdent,
-    EnumDataType type)
+    Stmt* pStmt,
+    DataType* pType)
 {
     typedef std::pair<std::string, SymbolEntry*> EntryPair;
     std::pair< std::map<std::string, SymbolEntry*>::iterator, bool> pair_return;
@@ -106,11 +144,11 @@ bool SymbolTable::insertVariableEntry(
         offset = getNewOffset();
     }
 
-    VariableEntry* pNewEntry = new VariableEntry(pIdent, type, global, offset);
+    VariableEntry* pNewEntry = new VariableEntry(pStmt, pType, global, offset);
 
-    Log().Get(logDEBUG) << "Inserting Variable: " << pIdent->getName() << std::endl;
+    Log().Get(logDEBUG) << "Inserting Variable: " << pStmt->getIdentifier()->getName() << std::endl;
 
-    pair_return = m_entries.insert(EntryPair(pIdent->getName(), pNewEntry));
+    pair_return = m_entries.insert(EntryPair(pStmt->getIdentifier()->getName(), pNewEntry));
 
     return pair_return.second;
 }
@@ -151,31 +189,31 @@ int SymbolTable::getDepth()
     return m_depth;
 }
 
-EnumDataType SymbolEntry::getType()
+DataType* SymbolEntry::getType()
 {
-    return m_type;
+    return m_pType;
 }
 
 FunctionEntry::FunctionEntry(
-    Identifier* pIdent,
-    std::vector<EnumDataType> args,
-    EnumDataType returnType)
-    : SymbolEntry(pIdent, returnType),
+    Stmt* pStmt,
+    std::vector<Variable*> args,
+    DataType* pReturnType)
+    : SymbolEntry(pStmt, pReturnType),
       m_args(args)
 {
 }
 
-std::vector<EnumDataType> FunctionEntry::getArgs()
+std::vector<Variable*> FunctionEntry::getArgs()
 {
     return m_args;
 }
 
 VariableEntry::VariableEntry(
-    Identifier*  pIdent,
-    EnumDataType type,
+    Stmt*        pStmt,
+    DataType*    pType,
     bool         global,
     int          index)
-    : SymbolEntry(pIdent, type),
+    : SymbolEntry(pStmt, pType),
       m_global(global),
       m_index(index)
 {
@@ -190,4 +228,3 @@ bool VariableEntry::isGlobal()
 {
     return m_global;
 }
-

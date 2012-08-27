@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "logger.h"
+#include "utils.h"
 
 class Stmt;
 class Expr;
@@ -19,21 +20,21 @@ typedef unsigned long long ull;
 
 enum EnumDataType
 {
-    C_VOID = 0,
-    C_CHAR,
-    C_SHORT,
-    C_INT,
-    C_LONG,
-    C_FLOAT,
-    C_DOUBLE,
-    C_SIGNED,
-    C_UNSIGNED,
-    C_BOOL,
-    C_COMPLEX,
-    C_IMAGINARY,
-    C_STRUCT_OR_UNION,
-    C_ENUM,
-    C_TYPENAME,
+    _VOID_ = 0,
+    _CHAR_,
+    _SHORT_,
+    _INT_,
+    _LONG_,
+    _FLOAT_,
+    _DOUBLE_,
+    _SIGNED_,
+    _UNSIGNED_,
+    _BOOL_,
+    _COMPLEX_,
+    _IMAGINARY_,
+    _STRUCT_OR_UNION_,
+    _ENUM_,
+    _TYPENAME_,
 };
 
 class Node
@@ -65,7 +66,48 @@ public:
              ull lineNo) :
       m_type(dataType), Expr(lineNo) 
     { 
-        Log().Get(logINFO) << "Creating DataType: " << dataType << std::endl;  
+        Log().Get(logDEBUG1) << "Creating DataType: " << DataType::getDataTypeStr(m_type) << std::endl;  
+    }
+
+    static std::string getDataTypeStr(EnumDataType t)
+    {
+        switch(t)
+        {
+        case _VOID_:
+            return "void";
+        case _CHAR_:
+            return "char";
+        case _SHORT_:
+            return "short";
+        case _INT_:
+            return "int";
+        case _LONG_:
+            return "long";
+        case _FLOAT_:
+            return "float";
+        case _DOUBLE_:
+            return "double";
+        case _SIGNED_:
+            return "signed";
+        case _UNSIGNED_:
+            return "unsigned";
+        case _BOOL_:
+            return "bool";
+        case _COMPLEX_:
+            return "complex";
+        case _IMAGINARY_:
+            return "imaginary";
+        case _STRUCT_OR_UNION_:
+            return "struct_or_union";
+        case _ENUM_:
+            return "enum";
+        case _TYPENAME_:
+            return "typename";
+        default:
+            return "invalid datatype";
+        }
+
+        return "";
     }
 };
 
@@ -79,7 +121,7 @@ public:
                 ull lineNo) :
         m_name(name), Expr(lineNo) 
     {
-        Log().Get(logINFO) << "Creating Identifier: " << m_name << std::endl;
+        Log().Get(logDEBUG1) << "Creating Identifier: " << m_name << std::endl;
     }
 
     std::string getName() const { return m_name; }
@@ -89,6 +131,7 @@ class Stmt : public Node
 {
 public:
     Stmt(ull lineNo) : Node(lineNo) { }
+    virtual const Identifier* getIdentifier() { return NULL; } 
 };
 
 class Integer : public Expr
@@ -100,7 +143,7 @@ public:
     Integer(long long value,
              ull lineNo) : m_value(value), Expr(lineNo) 
     {
-        Log().Get(logINFO) << "Creating Integer" << std::endl;  
+        Log().Get(logDEBUG1) << "Creating Integer" << std::endl;  
     }
 };
 
@@ -113,7 +156,7 @@ public:
     Double(double value, 
             ull lineNo) : m_value(value), Expr(lineNo) 
     {
-        Log().Get(logINFO) << "Creating Double" << std::endl;  
+        Log().Get(logDEBUG1) << "Creating Double" << std::endl;  
     }
 };
 
@@ -126,7 +169,7 @@ public:
     Float(float value,
            ull lineNo) : m_value(value), Expr(lineNo)
     {
-        Log().Get(logINFO) << "Creating Float" << std::endl;  
+        Log().Get(logDEBUG1) << "Creating Float" << std::endl;  
     }
 };
 
@@ -139,7 +182,7 @@ public:
     Bool(bool value,
           ull  lineNo) : m_value(value), Expr(lineNo)
     {
-        Log().Get(logINFO) << "Creating Bool" << std::endl;
+        Log().Get(logDEBUG1) << "Creating Bool" << std::endl;
     }
 };
 
@@ -152,7 +195,7 @@ public:
     Char(char value,
           ull  lineNo) : m_value(value), Expr(lineNo)
     {
-        Log().Get(logINFO) << "Creating Char" << std::endl;
+        Log().Get(logDEBUG1) << "Creating Char" << std::endl;
     }
 };
 
@@ -168,33 +211,15 @@ public:
                 ull lineNo) :
     m_pId(pId), m_arguments(arguments), Expr(lineNo)
     {
-        Log().Get(logINFO) << "Creating FunctionCall" << std::endl;  
+        Log().Get(logDEBUG1) << "Creating FunctionCall" << std::endl;  
     }
 
     FunctionCall(const Identifier* pId,
                 ull lineNo) : m_pId(pId), Expr(lineNo) 
     {
-        Log().Get(logINFO) << "Creating FunctionCall" << std::endl;  
+        Log().Get(logDEBUG1) << "Creating FunctionCall" << std::endl;  
     }
 };
-
-//class BinaryOperator : public Expr
-//{
-//private:
-//    int          m_op;
-//    Expr* m_pLhs;
-//    Expr* m_pRhs;
-//
-//public:
-//    BinaryOperator(Expr* pLhs, 
-//                    int op, 
-//                    Expr* pRhs,
-//                    ull lineNo) :
-//    m_pLhs(pLhs), m_pRhs(pRhs), m_op(op), Expr(lineNo)
-//    {
-//        Log().Get(logINFO) << "Creating BinaryOperator" << std::endl;  
-//    }
-//};
 
 class Assignment : public Expr
 {
@@ -208,7 +233,7 @@ public:
                 ull lineNo) : 
     m_pLhs(pLhs), m_pRhs(pRhs), Expr(lineNo)
     {
-        Log().Get(logINFO) << "Creating Assignment" << std::endl;  
+        Log().Get(logDEBUG1) << "Creating Assignment" << std::endl;  
     }
 };
 
@@ -220,7 +245,7 @@ private:
 public:
     Block(ull lineNo) : Expr(lineNo) 
     {
-        Log().Get(logINFO) << "Creating Block" << std::endl;  
+        Log().Get(logDEBUG1) << "Creating Block" << std::endl;  
     }
 
     void AddStmt(Stmt* pStmt)
@@ -472,7 +497,7 @@ public:
                          ull lineNo) : 
     m_pExpr(pExpr), Stmt(lineNo) 
     {
-        Log().Get(logINFO) << "Creating ExprStmt" << std::endl;  
+        Log().Get(logDEBUG1) << "Creating ExprStmt" << std::endl;  
     }
 };
 
@@ -480,7 +505,7 @@ class Variable : public Stmt
 {
 private:
     const DataType* m_datatype;
-    Identifier*     m_pId;
+    const Identifier*     m_pId;
     Expr*     m_pAssignmentExpr;
 
 public:
@@ -489,7 +514,7 @@ public:
              ull lineNo) : 
     m_datatype(dataType), m_pId(pId), m_pAssignmentExpr(NULL), Stmt(lineNo) 
     {
-        Log().Get(logINFO) << "Creating Variable" << std::endl;  
+        Log().Get(logDEBUG1) << "Creating Variable" << std::endl;  
     }
 
     Variable(const DataType* dataType,
@@ -498,15 +523,17 @@ public:
              ull lineNo) :
     m_datatype(dataType), m_pId(pId), m_pAssignmentExpr(assignmentExpr), Stmt(lineNo) 
     {
-        Log().Get(logINFO) << "Creating Variable" << std::endl;  
+        Log().Get(logDEBUG1) << "Creating Variable" << std::endl;  
     }
+
+    const Identifier* getIdentifier() { return m_pId; }
 };
 
 class FuncDecl : public Stmt
 {
 protected:
     const DataType*   m_pDataType;
-    const Identifier* m_pID;
+    const Identifier* m_pId;
     VariableList       m_arguments;
 
 public:
@@ -514,17 +541,19 @@ public:
                          const Identifier* id,
                          const VariableList& arguments,
                          ull lineNo) :
-    m_pDataType(datatype), m_pID(id), m_arguments(arguments), Stmt(lineNo) 
+    m_pDataType(datatype), m_pId(id), m_arguments(arguments), Stmt(lineNo) 
     {
-        Log().Get(logINFO) << "Creating FuncDecl" << std::endl;  
+        Log().Get(logDEBUG1) << "Creating FuncDecl" << std::endl;  
     }
+
+    const Identifier* getIdentifier() { return m_pId; }
 };
 
 class FuncDefn : public Stmt
 {
 protected:
     const DataType*   m_pDataType;
-    const Identifier* m_pID;
+    const Identifier* m_pId;
     VariableList       m_arguments;
     Block*            m_pBlock;
 
@@ -534,11 +563,13 @@ public:
                         const VariableList& arguments,
                         Block* block,
                         ull lineNo) :
-    m_pDataType(datatype), m_pID(id), m_arguments(arguments), m_pBlock(block),
+    m_pDataType(datatype), m_pId(id), m_arguments(arguments), m_pBlock(block),
     Stmt(lineNo)
     {
-        Log().Get(logINFO) << "Creating FuncDefn" << std::endl;  
+        Log().Get(logDEBUG1) << "Creating FuncDefn" << std::endl;  
     }
+
+    const Identifier* getIdentifier() { return m_pId; }
 };
 
 class MainDefn : public FuncDefn
@@ -551,7 +582,7 @@ public:
     FuncDefn(datatype, new Identifier("main", lineNo),
                         arguments, block, lineNo) 
     {
-        Log().Get(logINFO) << "Creating MainDefn" << std::endl;  
+        Log().Get(logDEBUG1) << "Creating MainDefn" << std::endl;  
     }
 };
 

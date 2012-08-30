@@ -87,6 +87,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\arch\mips.h" />
     <ClInclude Include="include\logger.h" />
     <ClInclude Include="include\node.h" />
     <ClInclude Include="include\parser.h" />

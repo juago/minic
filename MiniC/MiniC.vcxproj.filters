@@ -22,6 +22,12 @@
     <Filter Include="Test">
       <UniqueIdentifier>{f90dfe02-3384-48d0-9e34-22d964393f00}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\arch">
+      <UniqueIdentifier>{70b0bcea-1f10-43c0-a578-f5add902d520}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\arch">
+      <UniqueIdentifier>{d6d44aa9-f6d2-41c5-b878-01bf457fbb1d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="grammar\lexer.l">
@@ -66,6 +72,9 @@
     </ClInclude>
     <ClInclude Include="include\symbol.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\arch\mips.h">
+      <Filter>Header Files\arch</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

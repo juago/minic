@@ -56,6 +56,9 @@
     <ClCompile Include="src\symbol.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\arch\mips.cpp">
+      <Filter>Source Files\arch</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\node.h">
@@ -75,6 +78,15 @@
     </ClInclude>
     <ClInclude Include="include\arch\mips.h">
       <Filter>Header Files\arch</Filter>
+    </ClInclude>
+    <ClInclude Include="include\arch\backend.h">
+      <Filter>Header Files\arch</Filter>
+    </ClInclude>
+    <ClInclude Include="include\arch\x86.h">
+      <Filter>Header Files\arch</Filter>
+    </ClInclude>
+    <ClInclude Include="include\visitor.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

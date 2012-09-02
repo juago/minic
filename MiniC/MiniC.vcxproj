@@ -75,6 +75,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\arch\mips.cpp" />
     <ClCompile Include="src\lexer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\parser.cpp" />
@@ -87,12 +88,15 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\arch\backend.h" />
     <ClInclude Include="include\arch\mips.h" />
+    <ClInclude Include="include\arch\x86.h" />
     <ClInclude Include="include\logger.h" />
     <ClInclude Include="include\node.h" />
     <ClInclude Include="include\parser.h" />
     <ClInclude Include="include\symbol.h" />
     <ClInclude Include="include\utils.h" />
+    <ClInclude Include="include\visitor.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="grammar\lexer.l">

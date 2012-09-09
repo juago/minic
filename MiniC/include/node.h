@@ -552,24 +552,25 @@ public:
 class FuncDefn : public Stmt
 {
 protected:
-    const DataType*   m_pDataType;
+    const DataType*   m_pReturnType;
     const Identifier* m_pId;
-    VariableList       m_arguments;
+    VariableList      m_arguments;
     Block*            m_pBlock;
 
 public:
-    FuncDefn(const DataType* datatype, 
-                        const Identifier* id,
-                        const VariableList& arguments,
-                        Block* block,
-                        ull lineNo) :
-    m_pDataType(datatype), m_pId(id), m_arguments(arguments), m_pBlock(block),
+    FuncDefn(const DataType* pReturnType, 
+             const Identifier* id,
+             const VariableList& arguments,
+             Block* block,
+             ull lineNo) :
+    m_pReturnType(pReturnType), m_pId(id), m_arguments(arguments), m_pBlock(block),
     Stmt(lineNo)
     {
         Log().Get(logDEBUG1) << "Creating FuncDefn" << std::endl;  
     }
 
     const Identifier* getIdentifier() { return m_pId; }
+    const DataType*   getReturnType() { return m_pReturnType; }
 };
 
 class MainDefn : public FuncDefn

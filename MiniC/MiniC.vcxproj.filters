@@ -59,6 +59,9 @@
     <ClCompile Include="src\arch\mips.cpp">
       <Filter>Source Files\arch</Filter>
     </ClCompile>
+    <ClCompile Include="src\arch\x86.cpp">
+      <Filter>Source Files\arch</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\node.h">
@@ -87,6 +90,9 @@
     </ClInclude>
     <ClInclude Include="include\visitor.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\arch\target.h">
+      <Filter>Header Files\arch</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -3,14 +3,14 @@
     #include <cstdlib>
 
     #include "node.h"
-	#include "symbol.h"
+    #include "symbol.h"
 
     using namespace std;
 
     Block*    pProgramBlock; /* the top level root node of our final AST */
     MainDefn* pMain;
 
-	SymbolTableMgr* pSymbolTableMgr = new SymbolTableMgr();
+    SymbolTableMgr* pSymbolTableMgr = new SymbolTableMgr();
 
     extern int yylex();
     extern unsigned int lineNo;
@@ -171,7 +171,7 @@ stmt : var_decl
 
 block : LBRACE                                      { pSymbolTableMgr->enterScope(); }
         stmts										{ $$ = $3 }
-		RBRACE                                      { pSymbolTableMgr->leaveScope(); }
+        RBRACE                                      { pSymbolTableMgr->leaveScope(); }
       | LBRACE RBRACE                               { $$ = new Block(lineNo); }
       ;
 
@@ -196,14 +196,14 @@ main_defn : data_type MAIN LPAREN func_args RPAREN block
 func_decl : data_type ident LPAREN func_args RPAREN SEMICOLON 
             { 
                 $$ = new FuncDecl($1, $2, *$4, lineNo);
-				pSymbolTableMgr->insertFunctionEntry($$, *$4, $1);
+                pSymbolTableMgr->insertFunctionEntry($$, *$4, $1);
             }
           ;
 
 func_defn : data_type ident LPAREN func_args RPAREN block 
             { 
                 $$ = new FuncDefn($1, $2, *$4, $6, lineNo);
-				pSymbolTableMgr->insertFunctionEntry($$, *$4, $1);
+                pSymbolTableMgr->insertFunctionEntry($$, *$4, $1);
             }
           ;	
                   

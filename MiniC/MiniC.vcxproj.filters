@@ -59,8 +59,14 @@
     <ClCompile Include="src\arch\mips.cpp">
       <Filter>Source Files\arch</Filter>
     </ClCompile>
-    <ClCompile Include="src\arch\x86.cpp">
-      <Filter>Source Files\arch</Filter>
+    <ClCompile Include="src\output.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\node.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -82,17 +88,11 @@
     <ClInclude Include="include\arch\mips.h">
       <Filter>Header Files\arch</Filter>
     </ClInclude>
-    <ClInclude Include="include\arch\backend.h">
-      <Filter>Header Files\arch</Filter>
-    </ClInclude>
-    <ClInclude Include="include\arch\x86.h">
-      <Filter>Header Files\arch</Filter>
-    </ClInclude>
     <ClInclude Include="include\visitor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\arch\target.h">
-      <Filter>Header Files\arch</Filter>
+    <ClInclude Include="include\output.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

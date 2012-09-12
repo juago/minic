@@ -76,11 +76,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\arch\mips.cpp" />
-    <ClCompile Include="src\arch\x86.cpp" />
     <ClCompile Include="src\lexer.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\node.cpp" />
+    <ClCompile Include="src\output.cpp" />
     <ClCompile Include="src\parser.cpp" />
     <ClCompile Include="src\symbol.cpp" />
+    <ClCompile Include="src\utils.cpp" />
     <ClCompile Include="test\1.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -89,12 +91,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\arch\backend.h" />
     <ClInclude Include="include\arch\mips.h" />
-    <ClInclude Include="include\arch\target.h" />
-    <ClInclude Include="include\arch\x86.h" />
     <ClInclude Include="include\logger.h" />
     <ClInclude Include="include\node.h" />
+    <ClInclude Include="include\output.h" />
     <ClInclude Include="include\parser.h" />
     <ClInclude Include="include\symbol.h" />
     <ClInclude Include="include\utils.h" />

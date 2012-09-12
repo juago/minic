@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <visitor.h>
 
 #include "logger.h"
 #include "utils.h"
@@ -11,6 +12,9 @@
 class Stmt;
 class Expr;
 class Variable;
+
+// Visitor forward declarations
+class Visitor;
 
 typedef std::vector<Stmt*> StmtList;
 typedef std::vector<Expr*> ExprList;
@@ -45,6 +49,8 @@ public:
     }
 
     virtual ~Node() { }
+
+    virtual void accept(Visitor* pVisitor) = 0;
 
 private:
     ull m_lineNo;
@@ -109,6 +115,8 @@ public:
 
         return "";
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 class Identifier : public Expr
@@ -125,6 +133,8 @@ public:
     }
 
     std::string getName() const { return m_name; }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 class Stmt : public Node
@@ -145,6 +155,8 @@ public:
     {
         Log().Get(logDEBUG1) << "Creating Integer" << std::endl;  
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 class Double : public Expr
@@ -158,6 +170,8 @@ public:
     {
         Log().Get(logDEBUG1) << "Creating Double" << std::endl;  
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 class Float : public Expr
@@ -171,6 +185,8 @@ public:
     {
         Log().Get(logDEBUG1) << "Creating Float" << std::endl;  
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 class Bool : public Expr
@@ -184,6 +200,8 @@ public:
     {
         Log().Get(logDEBUG1) << "Creating Bool" << std::endl;
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 class Char : public Expr
@@ -197,6 +215,8 @@ public:
     {
         Log().Get(logDEBUG1) << "Creating Char" << std::endl;
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 class FunctionCall : public Expr
@@ -219,6 +239,8 @@ public:
     {
         Log().Get(logDEBUG1) << "Creating FunctionCall" << std::endl;  
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 class Assignment : public Expr
@@ -235,6 +257,8 @@ public:
     {
         Log().Get(logDEBUG1) << "Creating Assignment" << std::endl;  
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 class Block : public Expr
@@ -252,42 +276,55 @@ public:
     {
         m_Stmts.push_back(pStmt);
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class UnaryExpr : public Expr
 {
-    protected:
-        Expr* m_pRhs;
+protected:
+    Expr* m_pRhs;
 
-    public:
-        UnaryExpr(Expr* pRhs, ull lineNo) : Expr(lineNo), m_pRhs(pRhs) 
-        {
-        }
+public:
+    UnaryExpr(Expr* pRhs, ull lineNo) : Expr(lineNo), m_pRhs(pRhs) 
+    {
+    }
+
+    virtual void accept(Visitor* pVisitor)
+    {
+        pVisitor->visit(this);
+    }
 };
 
 class NegateUnaryExpr : public UnaryExpr
 {
-    public:
-        NegateUnaryExpr(Expr* pRhs, ull lineNo) : UnaryExpr(pRhs, lineNo)
-        {
-        }
+public:
+    NegateUnaryExpr(Expr* pRhs, ull lineNo) : UnaryExpr(pRhs, lineNo)
+    {
+    }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 class AdditionUnaryExpr : public NegateUnaryExpr
 {
-    public:
-        AdditionUnaryExpr(Expr* pRhs, ull lineNo) : NegateUnaryExpr(pRhs, lineNo)
-        {
-        }
+public:
+    AdditionUnaryExpr(Expr* pRhs, ull lineNo) : NegateUnaryExpr(pRhs, lineNo)
+    {
+    }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 class SubtractUnaryExpr : public NegateUnaryExpr
 {
-    public:
-        SubtractUnaryExpr(Expr* pRhs, ull lineNo) : NegateUnaryExpr(pRhs, lineNo)
-        {
-        }
+public:
+    SubtractUnaryExpr(Expr* pRhs, ull lineNo) : NegateUnaryExpr(pRhs, lineNo)
+    {
+    }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 
@@ -320,6 +357,8 @@ public:
     AdditionBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : NumberBinaryExpr(pLhs, pRhs, lineNo)
     {
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 class SubtractionBinaryExpr : public NumberBinaryExpr
@@ -328,6 +367,8 @@ public:
     SubtractionBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : NumberBinaryExpr(pLhs, pRhs, lineNo)
     {
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 class MultiplicationBinaryExpr : public NumberBinaryExpr
@@ -336,6 +377,8 @@ public:
     MultiplicationBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : NumberBinaryExpr(pLhs, pRhs, lineNo)
     {
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 class DivisionBinaryExpr : public NumberBinaryExpr
@@ -344,6 +387,8 @@ public:
     DivisionBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : NumberBinaryExpr(pLhs, pRhs, lineNo)
     {
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 class ModulusBinaryExpr : public NumberBinaryExpr
@@ -352,6 +397,8 @@ public:
     ModulusBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : NumberBinaryExpr(pLhs, pRhs, lineNo)
     {
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 
@@ -370,6 +417,8 @@ public:
     OrBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : LogicBinaryExpr(pLhs, pRhs, lineNo)
     {
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 class AndBinaryExpr : public LogicBinaryExpr
@@ -378,6 +427,8 @@ public:
     AndBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : LogicBinaryExpr(pLhs, pRhs, lineNo)
     {
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -395,6 +446,8 @@ public:
     LECompareBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : CompareBinaryExpr(pLhs, pRhs, lineNo)
     {
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 class LTCompareBinaryExpr : public CompareBinaryExpr
@@ -403,6 +456,7 @@ public:
     LTCompareBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : CompareBinaryExpr(pLhs, pRhs, lineNo)
     {
     }
+    virtual void accept(Visitor* pVisitor);
 };
 
 class GECompareBinaryExpr : public CompareBinaryExpr
@@ -411,6 +465,8 @@ public:
     GECompareBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : CompareBinaryExpr(pLhs, pRhs, lineNo)
     {
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 class GTCompareBinaryExpr : public CompareBinaryExpr
@@ -419,6 +475,8 @@ public:
     GTCompareBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : CompareBinaryExpr(pLhs, pRhs, lineNo)
     {
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 class EQCompareBinaryExpr : public CompareBinaryExpr
@@ -427,6 +485,7 @@ public:
     EQCompareBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : CompareBinaryExpr(pLhs, pRhs, lineNo)
     {
     }
+    virtual void accept(Visitor* pVisitor);
 };
 
 class NECompareBinaryExpr : public CompareBinaryExpr
@@ -435,6 +494,7 @@ public:
     NECompareBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : CompareBinaryExpr(pLhs, pRhs, lineNo)
     {
     }
+    virtual void accept(Visitor* pVisitor);
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -444,6 +504,8 @@ public:
     NullStmt(ull lineNo) : Stmt(lineNo)
     {
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 class IfStmt : public Stmt
@@ -461,6 +523,8 @@ public:
     IfStmt(Expr* pCond, Stmt* pThen, Stmt* pElse, ull lineNo) : m_pCond(pCond), m_pThenStmt(pThen), m_pElseStmt(pElse), Stmt(lineNo)
     {
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 class WhileStmt : public Stmt
@@ -473,6 +537,8 @@ public:
     WhileStmt(Expr* pCond, Stmt* pStmt, ull lineNo) : m_pCond(pCond), m_pStmt(pStmt), Stmt(lineNo)
     {
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 class ReturnStmt : public Stmt
@@ -484,6 +550,8 @@ public:
     ReturnStmt(Expr* pReturnExpr, ull lineNo) : m_pReturnExpr(pReturnExpr), Stmt(lineNo)
     {
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -499,6 +567,8 @@ public:
     {
         Log().Get(logDEBUG1) << "Creating ExprStmt" << std::endl;  
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 class Variable : public Stmt
@@ -526,6 +596,8 @@ public:
         Log().Get(logDEBUG1) << "Creating Variable" << std::endl;  
     }
 
+    virtual void accept(Visitor* pVisitor);
+
     const Identifier* getIdentifier() { return m_pId; }
 };
 
@@ -546,6 +618,8 @@ public:
         Log().Get(logDEBUG1) << "Creating FuncDecl" << std::endl;  
     }
 
+    virtual void accept(Visitor* pVisitor);
+
     const Identifier* getIdentifier() { return m_pId; }
 };
 
@@ -556,7 +630,7 @@ protected:
     const Identifier* m_pId;
     VariableList      m_arguments;
     Block*            m_pBlock;
-
+        
 public:
     FuncDefn(const DataType* pReturnType, 
              const Identifier* id,
@@ -568,6 +642,8 @@ public:
     {
         Log().Get(logDEBUG1) << "Creating FuncDefn" << std::endl;  
     }
+
+    virtual void accept(Visitor* pVisitor);
 
     const Identifier* getIdentifier() { return m_pId; }
     const DataType*   getReturnType() { return m_pReturnType; }
@@ -585,6 +661,8 @@ public:
     {
         Log().Get(logDEBUG1) << "Creating MainDefn" << std::endl;  
     }
+
+    virtual void accept(Visitor* pVisitor);
 };
 
 #endif

@@ -58,14 +58,14 @@
     #include <cstdlib>
 
     #include "node.h"
-	#include "symbol.h"
+    #include "symbol.h"
 
     using namespace std;
 
     Block*    pProgramBlock; /* the top level root node of our final AST */
     MainDefn* pMain;
 
-	SymbolTableMgr* pSymbolTableMgr = new SymbolTableMgr();
+    SymbolTableMgr* pSymbolTableMgr = new SymbolTableMgr();
 
     extern int yylex();
     extern unsigned int lineNo;
@@ -933,13 +933,13 @@ case 28:
 case 29:
 { 
                 yyval.stmt = new FuncDecl(yyvsp[-5].data_type, yyvsp[-4].ident, *yyvsp[-2].varvec, lineNo);
-				pSymbolTableMgr->insertFunctionEntry(yyval.stmt, *yyvsp[-2].varvec, yyvsp[-5].data_type);
+                pSymbolTableMgr->insertFunctionEntry(yyval.stmt, *yyvsp[-2].varvec, yyvsp[-5].data_type);
             ;
     break;}
 case 30:
 { 
                 yyval.stmt = new FuncDefn(yyvsp[-5].data_type, yyvsp[-4].ident, *yyvsp[-2].varvec, yyvsp[0].block, lineNo);
-				pSymbolTableMgr->insertFunctionEntry(yyval.stmt, *yyvsp[-2].varvec, yyvsp[-5].data_type);
+                pSymbolTableMgr->insertFunctionEntry(yyval.stmt, *yyvsp[-2].varvec, yyvsp[-5].data_type);
             ;
     break;}
 case 31:

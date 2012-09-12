@@ -66,3 +66,195 @@ std::string MipsVisitor::emit_div(MipsRegister dst, MipsRegister src1, MipsRegis
     std::string code_str = "div " + reg_name(dst) + " " + reg_name(src1) + " " + reg_name(src2) + "\n";
     return code_str;
 }
+
+/////////////////////// Visitor Methods //////////////////////////////
+void visit(DataType*                 pDataType)
+{
+
+}
+
+void visit(Identifier*               pIdentifier)
+{
+
+}
+
+void visit(Stmt*                     pStmt)
+{
+
+}
+
+void visit(Integer*                  pInteger)
+{
+
+
+}
+
+void visit(Float*                    pFloat)
+{
+
+}
+
+void visit(Double*                   pDouble)
+{
+
+}
+
+void visit(Bool*                     pBool)
+{
+
+}
+
+void visit(Char*                     pChar)
+{
+
+}
+
+void visit(FunctionCall*             pFuncCall)
+{
+
+}
+
+void visit(Assignment*               pAssignment)
+{
+
+}
+
+void visit(Block*                    pBlock)
+{
+
+}
+
+void visit(UnaryExpr*                pUnaryExpr)
+{
+
+}
+
+void visit(NegateUnaryExpr*          pNegateUnaryExpr)
+{
+
+}
+
+void visit(AdditionUnaryExpr*        pAdditionUnaryExpr)
+{
+
+}
+
+void visit(SubtractUnaryExpr*        pSubtractUnaryExpr)
+{
+
+}
+
+void visit(NumberBinaryExpr*         pBinaryExpr)
+{
+
+}
+
+void visit(AdditionBinaryExpr*       pAdditionBinaryExpr)
+{
+
+}
+
+void visit(SubtractionBinaryExpr*    pSubtractionBinaryExpr)
+{
+
+}
+
+void visit(MultiplicationBinaryExpr* pMultiplicationBinaryExpr)
+{
+
+}
+
+void visit(DivisionBinaryExpr*       pDivisionBinaryExpr)
+{
+
+}
+
+void visit(ModulusBinaryExpr*        pModulusBinaryExpr)
+{
+
+}
+
+void visit(LogicBinaryExpr*          pLogicBinaryExpr)
+{
+
+}
+
+void visit(OrBinaryExpr*             pOrBinaryExpr)
+{
+
+}
+
+void visit(AndBinaryExpr*            pAndBinaryExpr)
+{
+
+}
+
+void visit(LECompareBinaryExpr*      pLECompareBinaryExpr)
+{
+
+}
+
+void visit(LTCompareBinaryExpr*      pLTCompareBinaryExpr)
+{
+
+}
+
+void visit(GECompareBinaryExpr*      pGECompareBinaryExpr)
+{
+
+}
+
+void visit(GTCompareBinaryExpr*      pGTCompareBinaryExpr)
+{
+
+}
+
+void visit(EQCompareBinaryExpr*      pEQCompareBinaryExpr)
+{
+
+}
+
+void visit(NECompareBinaryExpr*      pNECompareBinaryExpr)
+{
+
+}
+
+void visit(IfStmt*                   pIfStmt)
+{
+
+}
+
+void visit(WhileStmt*                pWhileStmt)
+{
+
+}
+
+void visit(ReturnStmt*               pReturnStmt)
+{
+
+}
+
+void visit(ExprStmt*                 pExprStmt)
+{
+
+}
+
+void visit(Variable*                 pVariable)
+{
+
+}
+
+void visit(FuncDecl*                 pFuncDecl)
+{
+
+}
+
+void visit(FuncDefn*                 pFuncDefn)
+{
+
+}
+
+void visit(MainDefn*                 pMainDefn)
+{
+
+}

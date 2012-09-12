@@ -290,11 +290,6 @@ public:
     UnaryExpr(Expr* pRhs, ull lineNo) : Expr(lineNo), m_pRhs(pRhs) 
     {
     }
-
-    virtual void accept(Visitor* pVisitor)
-    {
-        pVisitor->visit(this);
-    }
 };
 
 class NegateUnaryExpr : public UnaryExpr

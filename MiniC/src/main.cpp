@@ -17,6 +17,8 @@ int main(int argc, char **argv)
         return -1;
     }
 
+    Log().Get(logINFO) << "Starting Parsing of File: " << argv[1] << endl;
+
     yyin = inpFile;
 
     yyparse();

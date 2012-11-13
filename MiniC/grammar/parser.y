@@ -17,6 +17,8 @@
     extern char *yytext;
     extern char linebuf[50];
 
+    string g_currentSymbolName = "";
+
     void yyerror(char *s)
     {
          printf("Line %d: %s at %s in this line:\n%s\n",
@@ -150,11 +152,11 @@ data_type : INT                                     { $$ = new DataType(_INT_, l
           | VOID                                    { $$ = new DataType(_VOID_, lineNo); delete $1; }
           ;
 
-program : stmts                                     { pProgramBlock = $1; }
+program : stmts                                     { /* pProgramBlock = $1; */ }
         ;
         
-stmts : stmt                                        { $$ = new Block(lineNo); $$->AddStmt($<stmt>1); }
-      | stmts stmt                                  { $1->AddStmt($<stmt>2); }
+stmts : stmt                                        { pSymbolTableMgr->insertStmtEntry($<stmt>1); }
+      | stmts stmt                                  { pSymbolTableMgr->insertStmtEntry($<stmt>2); }
       ;
 
 stmt : var_decl 
@@ -169,7 +171,7 @@ stmt : var_decl
      | SEMICOLON                                    { $$ = new NullStmt(lineNo); }
      ;
 
-block : LBRACE                                      { pSymbolTableMgr->enterScope(); $$ = new Block(lineNo); }
+block : LBRACE                                      { $$ = new Block(lineNo); pSymbolTableMgr->enterScope($$); }
         stmts										{ $$ = $3 }
         RBRACE                                      { pSymbolTableMgr->leaveScope(); }
       ;
@@ -211,7 +213,7 @@ func_args : /*blank*/                       { $$ = new VariableList(lineNo); }
           | func_args COMMA var_decl        { $1->push_back($<var_decl>3); }
           ;
 
-ident : IDENTIFIER                          { $$ = new Identifier(*$1, lineNo); }
+ident : IDENTIFIER                          { $$ = new Identifier(*$1, lineNo); g_currentSymbolName = *$1; }
       ;
 
 numeric : INTEGER_NUM                       { $$ = new Integer(atol($1->c_str()), lineNo); }

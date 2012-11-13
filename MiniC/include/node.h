@@ -153,7 +153,7 @@ public:
     Integer(long long value,
              ull lineNo) : m_value(value), Expr(lineNo) 
     {
-        Log().Get(logDEBUG1) << "Creating Integer" << std::endl;  
+        Log().Get(logDEBUG1) << "Creating Integer: " << value << std::endl;  
     }
 
     virtual void accept(Visitor* pVisitor);
@@ -168,7 +168,7 @@ public:
     Double(double value, 
             ull lineNo) : m_value(value), Expr(lineNo) 
     {
-        Log().Get(logDEBUG1) << "Creating Double" << std::endl;  
+        Log().Get(logDEBUG1) << "Creating Double: " << value << std::endl;  
     }
 
     virtual void accept(Visitor* pVisitor);
@@ -183,7 +183,7 @@ public:
     Float(float value,
            ull lineNo) : m_value(value), Expr(lineNo)
     {
-        Log().Get(logDEBUG1) << "Creating Float" << std::endl;  
+        Log().Get(logDEBUG1) << "Creating Float: " << value << std::endl;  
     }
 
     virtual void accept(Visitor* pVisitor);
@@ -198,7 +198,7 @@ public:
     Bool(bool value,
           ull  lineNo) : m_value(value), Expr(lineNo)
     {
-        Log().Get(logDEBUG1) << "Creating Bool" << std::endl;
+        Log().Get(logDEBUG1) << "Creating Bool: " << value << std::endl;
     }
 
     virtual void accept(Visitor* pVisitor);
@@ -213,7 +213,7 @@ public:
     Char(char value,
           ull  lineNo) : m_value(value), Expr(lineNo)
     {
-        Log().Get(logDEBUG1) << "Creating Char" << std::endl;
+        Log().Get(logDEBUG1) << "Creating Char: " << value << std::endl;
     }
 
     virtual void accept(Visitor* pVisitor);
@@ -231,13 +231,13 @@ public:
                 ull lineNo) :
     m_pId(pId), m_arguments(arguments), Expr(lineNo)
     {
-        Log().Get(logDEBUG1) << "Creating FunctionCall" << std::endl;  
+        Log().Get(logDEBUG1) << "Creating FunctionCall: " << pId->getName() << std::endl;  
     }
 
     FunctionCall(const Identifier* pId,
                 ull lineNo) : m_pId(pId), Expr(lineNo) 
     {
-        Log().Get(logDEBUG1) << "Creating FunctionCall" << std::endl;  
+        Log().Get(logDEBUG1) << "Creating FunctionCall: " << pId->getName() << std::endl;  
     }
 
     virtual void accept(Visitor* pVisitor);
@@ -579,7 +579,7 @@ public:
              ull lineNo) : 
     m_datatype(dataType), m_pId(pId), m_pAssignmentExpr(NULL), Stmt(lineNo) 
     {
-        Log().Get(logDEBUG1) << "Creating Variable" << std::endl;  
+        Log().Get(logDEBUG1) << "Creating Variable: " << m_pId->getName() << std::endl;  
     }
 
     Variable(const DataType* dataType,
@@ -588,7 +588,7 @@ public:
              ull lineNo) :
     m_datatype(dataType), m_pId(pId), m_pAssignmentExpr(assignmentExpr), Stmt(lineNo) 
     {
-        Log().Get(logDEBUG1) << "Creating Variable" << std::endl;  
+        Log().Get(logDEBUG1) << "Creating Variable: " << m_pId->getName() << std::endl;  
     }
 
     virtual void accept(Visitor* pVisitor);

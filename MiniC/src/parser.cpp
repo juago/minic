@@ -72,6 +72,8 @@
     extern char *yytext;
     extern char linebuf[50];
 
+    string g_currentSymbolName = "";
+
     void yyerror(char *s)
     {
          printf("Line %d: %s at %s in this line:\n%s\n",
@@ -204,13 +206,13 @@ static const short yyrhs[] = {     9,
 
 #if YYDEBUG != 0
 static const short yyrline[] = { 0,
-   145,   146,   147,   148,   149,   150,   153,   156,   157,   160,
-   161,   162,   163,   164,   165,   166,   167,   168,   169,   172,
-   173,   174,   177,   178,   179,   182,   188,   195,   202,   209,
-   210,   211,   214,   217,   218,   219,   223,   224,   225,   226,
-   227,   229,   230,   231,   232,   233,   234,   235,   236,   239,
-   240,   241,   243,   244,   245,   246,   247,   248,   249,   250,
-   253,   254,   255,   256,   259,   260,   263,   266,   267
+   147,   148,   149,   150,   151,   152,   155,   158,   159,   162,
+   163,   164,   165,   166,   167,   168,   169,   170,   171,   174,
+   175,   176,   179,   180,   181,   184,   190,   197,   204,   211,
+   212,   213,   216,   219,   220,   221,   225,   226,   227,   228,
+   229,   231,   232,   233,   234,   235,   236,   237,   238,   241,
+   242,   243,   245,   246,   247,   248,   249,   250,   251,   252,
+   255,   256,   257,   258,   261,   262,   265,   268,   269
 };
 
 static const char * const yytname[] = {   "$","error","$undefined.","IDENTIFIER",
@@ -873,13 +875,13 @@ case 6:
 { yyval.data_type = new DataType(_VOID_, lineNo); delete yyvsp[0].string; ;
     break;}
 case 7:
-{ pProgramBlock = yyvsp[0].block; ;
+{ /* pProgramBlock = $1; */ ;
     break;}
 case 8:
-{ yyval.block = new Block(lineNo); yyval.block->AddStmt(yyvsp[0].stmt); ;
+{ pSymbolTableMgr->insertStmtEntry(yyvsp[0].stmt); ;
     break;}
 case 9:
-{ yyvsp[-1].block->AddStmt(yyvsp[0].stmt); ;
+{ pSymbolTableMgr->insertStmtEntry(yyvsp[0].stmt); ;
     break;}
 case 15:
 { yyval.stmt = yyvsp[0].stmt; ;
@@ -897,7 +899,7 @@ case 19:
 { yyval.stmt = new NullStmt(lineNo); ;
     break;}
 case 20:
-{ pSymbolTableMgr->enterScope(); yyval.block = new Block(lineNo); ;
+{ yyval.block = new Block(lineNo); pSymbolTableMgr->enterScope(yyval.block); ;
     break;}
 case 21:
 { yyval.block = yyvsp[0].block ;
@@ -947,7 +949,7 @@ case 32:
 { yyvsp[-2].varvec->push_back(yyvsp[0].var_decl); ;
     break;}
 case 33:
-{ yyval.ident = new Identifier(*yyvsp[0].string, lineNo); ;
+{ yyval.ident = new Identifier(*yyvsp[0].string, lineNo); g_currentSymbolName = *yyvsp[0].string; ;
     break;}
 case 34:
 { yyval.expr = new Integer(atol(yyvsp[0].string->c_str()), lineNo); ;

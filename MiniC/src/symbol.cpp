@@ -1,15 +1,19 @@
 #include "symbol.h"
 #include "logger.h"
 
+// extern Block* pProgramBlock;
+
 SymbolTableMgr::SymbolTableMgr()
 {
-    m_pGlobalSymbolTable = new SymbolTable(NULL);
+    m_pGlobalProgramBlock = new Block(0);
+    m_pGlobalSymbolTable = new SymbolTable(m_pGlobalProgramBlock, NULL);
     m_pCurrentSymbolTable = m_pGlobalSymbolTable;
 }
 
-void SymbolTableMgr::enterScope()
+void SymbolTableMgr::enterScope(Block* pBlock)
 {
-    m_pCurrentSymbolTable = new SymbolTable(m_pCurrentSymbolTable);
+    Log().Get(logDEBUG) << "Entering new Scope: " << endl;
+    m_pCurrentSymbolTable = new SymbolTable(pBlock, m_pCurrentSymbolTable);
 }
 
 void SymbolTableMgr::leaveScope()
@@ -18,6 +22,17 @@ void SymbolTableMgr::leaveScope()
     {
         // Set the maximum used index of the parent to the child if its greater
         m_pCurrentSymbolTable->getParent()->setMaxLocalCount(m_pCurrentSymbolTable->getMaxLocalCount());
+
+        vector<Stmt*>::iterator varListIterator = m_tempScopeStmtList.begin();
+        while (varListIterator != m_tempScopeStmtList.end())
+        {
+            m_pCurrentSymbolTable->insertStmtEntry(*varListIterator);
+            ++varListIterator;
+        }
+
+        m_tempScopeStmtList.clear();
+
+        Log().Get(logDEBUG) << "Leaving Scope: " << endl;
 
         // Restore scope to parent
         m_pCurrentSymbolTable = m_pCurrentSymbolTable->getParent();
@@ -43,6 +58,13 @@ bool SymbolTableMgr::insertVariableEntry(
     return m_pCurrentSymbolTable->insertVariableEntry(pVariable);
 }
 
+bool SymbolTableMgr::insertStmtEntry(Stmt* pStmt)
+{
+    // return m_pCurrentSymbolTable->insertStmtEntry(pStmt);
+    m_tempScopeStmtList.push_back(pStmt);
+    return true;
+}
+
 void SymbolTableMgr::setCurrentFunc(FuncDefn* pFuncDefn)
 {
     m_pCurrentFunc = pFuncDefn;
@@ -53,9 +75,49 @@ FuncDefn* SymbolTableMgr::getCurrentFunc()
     return m_pCurrentFunc;
 }
 
+Stmt* SymbolTableMgr::isInTemporaryList(string identifier)
+{
+    vector<Stmt *>::iterator tempListIter = m_tempScopeStmtList.begin();
+    while (tempListIter != m_tempScopeStmtList.end())
+    {
+        Stmt* pStmt = (*tempListIter);
+        if (pStmt->getIdentifier()->getName() == identifier)
+            return pStmt;
+        ++tempListIter;
+    }
+
+    return NULL;
+}
+
+Stmt* SymbolTableMgr::isInParentScopes(string identifier)
+{
+    SymbolTable* pTable = m_pCurrentSymbolTable;
+    while (pTable->getParent() != NULL)
+    {
+        pTable = pTable->getParent();
+        // pTable->getVariableEntry(
+    }
+}
+
+Stmt* SymbolTableMgr::isIdentifierPresent(string identifier)
+{
+    // First search in the temporary scope
+    Stmt* pStmt = isInTemporaryList(identifier);
+
+    if (pStmt == NULL)
+    {
+        // Now search in parent scopes to see if its global or local
+        
+    }
+}
+
+//--------------------------------------------------- SYMBOL TABLE IMPLEMENTATION -----------------------------------------------------
+
 SymbolTable::SymbolTable(
+    Block*       pBlock,
     SymbolTable* pParent)
-    : m_pParent(pParent),
+    : m_pBlock(pBlock),
+      m_pParent(pParent),
       m_currentOffset(0),
       m_maxLocalCount(0),
       m_depth(0)
@@ -166,9 +228,11 @@ bool SymbolTable::insertVariableEntry(
     return pair_return.second;
 }
 
-int SymbolTable::getOffset()
+bool SymbolTable::insertStmtEntry(
+    Stmt* pStmt)
 {
-    return m_currentOffset;
+    m_pBlock->AddStmt(pStmt);
+    return true;
 }
 
 int SymbolTable::getNewOffset()
@@ -179,25 +243,10 @@ int SymbolTable::getNewOffset()
     return oldOffset;
 }
 
-SymbolTable* SymbolTable::getParent()
-{
-    return m_pParent;
-}
-
-int SymbolTable::getMaxLocalCount()
-{
-    return m_maxLocalCount;
-}
-
 void SymbolTable::setMaxLocalCount(int newLocalCount)
 {
     if (m_maxLocalCount < newLocalCount)
     {
         m_maxLocalCount = newLocalCount;
     }
-}
-
-int SymbolTable::getDepth()
-{
-    return m_depth;
 }

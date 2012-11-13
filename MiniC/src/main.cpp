@@ -3,6 +3,8 @@
 
 using namespace std;
 
+TLogLevel Log::reportingLevel = logERROR;
+
 extern int yyparse();
 extern FILE *yyin;
 extern Block*    pProgramBlock;

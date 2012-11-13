@@ -7,14 +7,14 @@
 
 enum TLogLevel 
 {
-    logERROR, 
-    logWARNING, 
-    logINFO, 
     logDEBUG, 
     logDEBUG1, 
     logDEBUG2,
     logDEBUG3, 
-    logDEBUG4
+    logDEBUG4,
+	logINFO,
+    logWARNING,  
+    logERROR, 
 };
 
 class Log
@@ -27,11 +27,14 @@ public:
     static TLogLevel& ReportingLevel();
     static std::string ToString(TLogLevel level);
     static TLogLevel FromString(const std::string& level);
+	static void SetLogLevel(TLogLevel logLevel);
 protected:
     std::ostringstream os;
 private:
     Log(const Log&);
     Log& operator =(const Log&);
+
+	static TLogLevel reportingLevel;
 };
 
 inline Log::Log()
@@ -40,9 +43,9 @@ inline Log::Log()
 
 inline std::ostringstream& Log::Get(TLogLevel level)
 {
-    os << " " << ToString(level) << ": ";
-    os << std::string(level > logDEBUG ? level - logDEBUG : 0, '\t');
-    return os;
+		os << " " << ToString(level) << ": ";
+		os << std::string(level > reportingLevel ? level - reportingLevel : 0, '\t');
+		return os;
 }
 
 inline Log::~Log()
@@ -54,13 +57,18 @@ inline Log::~Log()
 
 inline TLogLevel& Log::ReportingLevel()
 {
-    static TLogLevel reportingLevel = logDEBUG4;
+    reportingLevel = logDEBUG4;
     return reportingLevel;
+}
+
+inline void Log::SetLogLevel(TLogLevel logLevel)
+{
+	reportingLevel = logLevel;
 }
 
 inline std::string Log::ToString(TLogLevel level)
 {
-    static const char* const buffer[] = {"ERROR", "WARNING", "INFO", "DEBUG", "DEBUG1", "DEBUG2", "DEBUG3", "DEBUG4"};
+    static const char* const buffer[] = {"DEBUG", "DEBUG1", "DEBUG2", "DEBUG3", "DEBUG4", "INFO", "WARNING", "ERROR"};
     return buffer[level];
 }
 

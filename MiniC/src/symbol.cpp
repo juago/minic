@@ -92,11 +92,16 @@ Stmt* SymbolTableMgr::isInTemporaryList(string identifier)
 Stmt* SymbolTableMgr::isInParentScopes(string identifier)
 {
     SymbolTable* pTable = m_pCurrentSymbolTable;
+	Stmt* pStmt = NULL;
     while (pTable->getParent() != NULL)
     {
         pTable = pTable->getParent();
-        // pTable->getVariableEntry(
+		pStmt = pTable->getVariableEntry(identifier);
+		if (pStmt == NULL)
+			pStmt = pTable->getFuncDefnEntry(identifier);
     }
+
+	return pStmt;
 }
 
 Stmt* SymbolTableMgr::isIdentifierPresent(string identifier)
@@ -107,8 +112,10 @@ Stmt* SymbolTableMgr::isIdentifierPresent(string identifier)
     if (pStmt == NULL)
     {
         // Now search in parent scopes to see if its global or local
-        
+        pStmt = isInParentScopes(identifier);
     }
+
+	return pStmt;
 }
 
 //--------------------------------------------------- SYMBOL TABLE IMPLEMENTATION -----------------------------------------------------
@@ -133,11 +140,11 @@ SymbolTable::SymbolTable(
 
 // Search the symbol table recursively for the function
 FuncDefn* SymbolTable::getFuncDefnEntry(
-    Stmt* pStmt)
+    string identifier)
 {
-    Log().Get(logDEBUG) << "Looking for Function: " << pStmt->getIdentifier()->getName() << endl;
+    Log().Get(logDEBUG) << "Looking for Function: " << identifier << endl;
 
-    map<string, FuncDefn*>::iterator iter = m_funcDefnList.find(pStmt->getIdentifier()->getName());
+    map<string, FuncDefn*>::iterator iter = m_funcDefnList.find(identifier);
 
     if (iter != m_funcDefnList.end())
     {
@@ -148,7 +155,7 @@ FuncDefn* SymbolTable::getFuncDefnEntry(
     {
         if (m_pParent != NULL)
         {
-            return m_pParent->getFuncDefnEntry(pStmt);
+            return m_pParent->getFuncDefnEntry(identifier);
         }
         else
         {
@@ -158,11 +165,11 @@ FuncDefn* SymbolTable::getFuncDefnEntry(
 }
 
 Variable* SymbolTable::getVariableEntry(
-    Stmt* pStmt)
+	string identifier)
 {
-    Log().Get(logDEBUG) << "Looking for Function: " << pStmt->getIdentifier()->getName() << endl;
+    Log().Get(logDEBUG) << "Looking for Variable: " << identifier << endl;
 
-    std::map<std::string, Variable*>::iterator iter = m_entries.find(pStmt->getIdentifier()->getName());
+    std::map<std::string, Variable*>::iterator iter = m_entries.find(identifier);
 
     if (iter != m_entries.end())
     {
@@ -173,7 +180,7 @@ Variable* SymbolTable::getVariableEntry(
     {
         if (m_pParent != NULL)
         {
-            return m_pParent->getVariableEntry(pStmt);
+            return m_pParent->getVariableEntry(identifier);
         }
         else
         {

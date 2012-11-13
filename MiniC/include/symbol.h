@@ -52,8 +52,8 @@ protected:
 
 public:
     SymbolTable(Block* pBlock, SymbolTable* pParent);
-    FuncDefn* getFuncDefnEntry(Stmt* pStmt);
-    Variable* getVariableEntry(Stmt* pStmt);
+    FuncDefn* getFuncDefnEntry(string identifier);
+    Variable* getVariableEntry(string identifier);
     bool insertFuncDefnEntry(FuncDefn* pFuncDefn);
     bool insertFuncDeclEntry(FuncDecl* pFuncDecl);
     bool insertVariableEntry(Variable* pVariable);

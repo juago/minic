@@ -5,7 +5,6 @@
 #include "node.h"
 
 class SymbolTable;
-class SymbolEntry;
 class FunctionEntry;
 class VariableEntry;
 
@@ -14,6 +13,7 @@ class SymbolTableMgr
 private:
     SymbolTable* m_pCurrentSymbolTable;
     SymbolTable* m_pGlobalSymbolTable;
+    FuncDefn*    m_pCurrentFunc;
 
 public:
     SymbolTableMgr();
@@ -21,26 +21,34 @@ public:
 
     void enterScope();
     void leaveScope();
-    bool insertFunctionEntry(Stmt* pStmt, std::vector<Variable*> args, DataType* pReturnType);
-    bool insertVariableEntry(Stmt* pStmt, DataType* pType);
+    bool insertFuncDefnEntry(FuncDefn* pFuncDefn);
+    bool insertFuncDeclEntry(FuncDecl* pFuncDecl);
+    bool insertVariableEntry(Variable* pVariable);
+    FuncDefn* getCurrentFunc();
+
+private:
+    void setCurrentFunc(FuncDefn* pFuncDefn);
 };
 
 class SymbolTable
 {
 protected:
-    std::map<std::string, SymbolEntry*, std::less<std::string> > m_entries;
-    std::vector<SymbolTable*>                                    m_symbolTableEntries;
-    SymbolTable*                                                 m_pParent;
-    int                                                          m_currentOffset;
-    int                                                          m_maxLocalCount;
-    int                                                          m_depth;
+    map<string, FuncDecl*>                        m_funcDeclList;
+    map<string, FuncDefn*>                        m_funcDefnList;
+    map<string, Variable*>                        m_entries;
+    vector<SymbolTable*>                          m_symbolTableEntries;
+    SymbolTable*                                  m_pParent;
+    int                                           m_currentOffset;
+    int                                           m_maxLocalCount;
+    int                                           m_depth;
 
 public:
     SymbolTable(SymbolTable* pParent);
-    FunctionEntry* getFunctionEntry(Stmt* pStmt);
-    VariableEntry* getVariableEntry(Stmt* pStmt);
-    bool insertFunctionEntry(Stmt* pStmt, std::vector<Variable*> args, DataType* pReturnType);
-    bool insertVariableEntry(Stmt* pStmt, DataType* pType);
+    FuncDefn* getFuncDefnEntry(Stmt* pStmt);
+    Variable* getVariableEntry(Stmt* pStmt);
+    bool insertFuncDefnEntry(FuncDefn* pFuncDefn);
+    bool insertFuncDeclEntry(FuncDecl* pFuncDecl);
+    bool insertVariableEntry(Variable* pVariable);
     int getOffset();
     int getNewOffset();
     SymbolTable* getParent();
@@ -49,45 +57,7 @@ public:
     int getDepth();
 };
 
-class SymbolEntry
-{
-protected:
-    Stmt*  m_pStmt;
-    DataType* m_pType;
-
-public:
-    SymbolEntry(Stmt* pStmt, DataType* pType) : m_pStmt(pStmt), m_pType(pType)
-    {
-    }
-
-    virtual ~SymbolEntry()
-    {
-    }
-
-    DataType* getType();
-};
-
-class FunctionEntry : public SymbolEntry
-{
-protected:
-    DataType*                 m_pReturnType;
-    std::vector<Variable*>    m_args;
-
-public:
-    FunctionEntry(Stmt* pStmt, std::vector<Variable*> args, DataType* pReturnType);
-    std::vector<Variable*> getArgs();
-};
-
-class VariableEntry : public SymbolEntry
-{
-protected:
-    int                       m_index;
-    bool                      m_global;
-
-public:
-    VariableEntry(Stmt* pStmt, DataType* pType, bool global, int index);
-    int getIndex();
-    bool isGlobal();
-};
+typedef std::pair<std::string, Variable*> StmtPair;
+typedef std::pair< std::map<std::string, Variable*>::iterator, bool> PairReturn;
 
 #endif

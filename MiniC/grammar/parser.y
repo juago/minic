@@ -169,15 +169,14 @@ stmt : var_decl
      | SEMICOLON                                    { $$ = new NullStmt(lineNo); }
      ;
 
-block : LBRACE                                      { pSymbolTableMgr->enterScope(); }
+block : LBRACE                                      { pSymbolTableMgr->enterScope(); $$ = new Block(lineNo); }
         stmts										{ $$ = $3 }
         RBRACE                                      { pSymbolTableMgr->leaveScope(); }
-      | LBRACE RBRACE                               { $$ = new Block(lineNo); }
       ;
 
-var_decl : data_type ident SEMICOLON                { $$ = new Variable($1, $2, lineNo); pSymbolTableMgr->insertVariableEntry($$, $1); }
-         | data_type ident EQUAL expr SEMICOLON     { $$ = new Variable($1, $2, $4, lineNo); pSymbolTableMgr->insertVariableEntry($$, $1); }
-         | data_type ident                          { $$ = new Variable($1, $2, lineNo); pSymbolTableMgr->insertVariableEntry($$, $1); }
+var_decl : data_type ident SEMICOLON                { $$ = new Variable($1, $2, lineNo); pSymbolTableMgr->insertVariableEntry((Variable*)$$); }
+         | data_type ident EQUAL expr SEMICOLON     { $$ = new Variable($1, $2, $4, lineNo); pSymbolTableMgr->insertVariableEntry((Variable *)$$); }
+         | data_type ident                          { $$ = new Variable($1, $2, lineNo); pSymbolTableMgr->insertVariableEntry((Variable *)$$); }
          ;
 
 main_decl : data_type MAIN LPAREN func_args RPAREN SEMICOLON 
@@ -193,19 +192,19 @@ main_defn : data_type MAIN LPAREN func_args RPAREN block
             }
           ;
 
-func_decl : data_type ident LPAREN func_args RPAREN SEMICOLON 
+func_defn : data_type ident LPAREN func_args RPAREN block
             { 
-                $$ = new FuncDecl($1, $2, *$4, lineNo);
-                pSymbolTableMgr->insertFunctionEntry($$, *$4, $1);
+                $$ = new FuncDefn($1, $2, *$4, $6, lineNo);
+                pSymbolTableMgr->insertFuncDefnEntry((FuncDefn *)$$);
             }
           ;
 
-func_defn : data_type ident LPAREN func_args RPAREN block 
+func_decl : data_type ident LPAREN func_args RPAREN SEMICOLON 
             { 
-                $$ = new FuncDefn($1, $2, *$4, $6, lineNo);
-                pSymbolTableMgr->insertFunctionEntry($$, *$4, $1);
+                $$ = new FuncDecl($1, $2, *$4, lineNo);
+                pSymbolTableMgr->insertFuncDeclEntry((FuncDecl *)$$);
             }
-          ;	
+          ;
                   
 func_args : /*blank*/                       { $$ = new VariableList(lineNo); }
           | var_decl                        { $$ = new VariableList(); $$->push_back($<var_decl>1); }

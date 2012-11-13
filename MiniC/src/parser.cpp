@@ -123,7 +123,7 @@ typedef
 
 
 
-#define	YYFINAL		121
+#define	YYFINAL		120
 #define	YYFLAG		-32768
 #define	YYNTBASE	51
 
@@ -167,37 +167,37 @@ static const char yytranslate[] = {     0,
 static const short yyprhs[] = {     0,
      0,     2,     4,     6,     8,    10,    12,    14,    16,    19,
     21,    23,    25,    27,    29,    31,    33,    35,    38,    40,
-    41,    42,    48,    51,    55,    61,    64,    71,    78,    85,
-    92,    93,    95,    99,   101,   103,   105,   107,   111,   115,
-   119,   123,   127,   131,   135,   139,   143,   147,   151,   155,
-   159,   162,   165,   168,   173,   178,   180,   182,   184,   186,
-   188,   192,   193,   195,   197,   201,   207,   215,   221,   224
+    41,    42,    48,    52,    58,    61,    68,    75,    82,    89,
+    90,    92,    96,    98,   100,   102,   104,   108,   112,   116,
+   120,   124,   128,   132,   136,   140,   144,   148,   152,   156,
+   159,   162,   165,   170,   175,   177,   179,   181,   183,   185,
+   189,   190,   192,   194,   198,   204,   212,   218,   221
 };
 
 static const short yyrhs[] = {     9,
      0,    10,     0,    11,     0,    13,     0,    14,     0,    12,
      0,    53,     0,    54,     0,    53,    54,     0,    58,     0,
-    59,     0,    61,     0,    62,     0,    60,     0,    71,     0,
+    59,     0,    62,     0,    61,     0,    60,     0,    71,     0,
     72,     0,    73,     0,    69,    28,     0,    28,     0,     0,
-     0,    24,    56,    53,    57,    25,     0,    24,    25,     0,
-    51,    64,    28,     0,    51,    64,    21,    69,    28,     0,
-    51,    64,     0,    51,     8,    22,    63,    23,    28,     0,
-    51,     8,    22,    63,    23,    55,     0,    51,    64,    22,
-    63,    23,    28,     0,    51,    64,    22,    63,    23,    55,
-     0,     0,    58,     0,    63,    26,    58,     0,     3,     0,
-     4,     0,     5,     0,     6,     0,    69,    29,    69,     0,
-    69,    30,    69,     0,    69,    31,    69,     0,    69,    32,
-    69,     0,    69,    33,    69,     0,    69,    42,    69,     0,
-    69,    43,    69,     0,    69,    48,    69,     0,    69,    49,
-    69,     0,    69,    44,    69,     0,    69,    45,    69,     0,
-    69,    47,    69,     0,    69,    46,    69,     0,    36,    69,
-     0,    29,    69,     0,    30,    69,     0,    64,    21,    69,
-    28,     0,    64,    22,    70,    23,     0,    64,     0,    66,
-     0,    67,     0,    68,     0,    65,     0,    22,    69,    23,
-     0,     0,    12,     0,    69,     0,    70,    26,    69,     0,
-    38,    22,    69,    23,    54,     0,    38,    22,    69,    23,
-    54,    39,    54,     0,    40,    22,    69,    23,    54,     0,
-    41,    28,     0,    41,    69,    28,     0
+     0,    24,    56,    53,    57,    25,     0,    51,    64,    28,
+     0,    51,    64,    21,    69,    28,     0,    51,    64,     0,
+    51,     8,    22,    63,    23,    28,     0,    51,     8,    22,
+    63,    23,    55,     0,    51,    64,    22,    63,    23,    55,
+     0,    51,    64,    22,    63,    23,    28,     0,     0,    58,
+     0,    63,    26,    58,     0,     3,     0,     4,     0,     5,
+     0,     6,     0,    69,    29,    69,     0,    69,    30,    69,
+     0,    69,    31,    69,     0,    69,    32,    69,     0,    69,
+    33,    69,     0,    69,    42,    69,     0,    69,    43,    69,
+     0,    69,    48,    69,     0,    69,    49,    69,     0,    69,
+    44,    69,     0,    69,    45,    69,     0,    69,    47,    69,
+     0,    69,    46,    69,     0,    36,    69,     0,    29,    69,
+     0,    30,    69,     0,    64,    21,    69,    28,     0,    64,
+    22,    70,    23,     0,    64,     0,    66,     0,    67,     0,
+    68,     0,    65,     0,    22,    69,    23,     0,     0,    12,
+     0,    69,     0,    70,    26,    69,     0,    38,    22,    69,
+    23,    54,     0,    38,    22,    69,    23,    54,    39,    54,
+     0,    40,    22,    69,    23,    54,     0,    41,    28,     0,
+    41,    69,    28,     0
 };
 
 #endif
@@ -206,11 +206,11 @@ static const short yyrhs[] = {     9,
 static const short yyrline[] = { 0,
    145,   146,   147,   148,   149,   150,   153,   156,   157,   160,
    161,   162,   163,   164,   165,   166,   167,   168,   169,   172,
-   173,   174,   175,   178,   179,   180,   183,   189,   196,   203,
-   210,   211,   212,   215,   218,   219,   220,   224,   225,   226,
-   227,   228,   230,   231,   232,   233,   234,   235,   236,   237,
-   240,   241,   242,   244,   245,   246,   247,   248,   249,   250,
-   251,   254,   255,   256,   257,   260,   261,   264,   267,   268
+   173,   174,   177,   178,   179,   182,   188,   195,   202,   209,
+   210,   211,   214,   217,   218,   219,   223,   224,   225,   226,
+   227,   229,   230,   231,   232,   233,   234,   235,   236,   239,
+   240,   241,   243,   244,   245,   246,   247,   248,   249,   250,
+   253,   254,   255,   256,   259,   260,   263,   266,   267
 };
 
 static const char * const yytname[] = {   "$","error","$undefined.","IDENTIFIER",
@@ -219,7 +219,7 @@ static const char * const yytname[] = {   "$","error","$undefined.","IDENTIFIER"
 "LBRACE","RBRACE","COMMA","DOT","SEMICOLON","PLUS","MINUS","MUL","DIV","MOD",
 "LSHIFT","RSHIFT","NOT","TILDA","IF","ELSE","WHILE","RETURN","OR","AND","LE",
 "LT","GT","GE","EQ","NE","UNARY_OP","data_type","program","stmts","stmt","block",
-"@1","@2","var_decl","main_decl","main_defn","func_decl","func_defn","func_args",
+"@1","@2","var_decl","main_decl","main_defn","func_defn","func_decl","func_args",
 "ident","numeric","ops_expr","comparison_expr","unary_expr","expr","call_args",
 "if_stmt","while_stmt","return_stmt",""
 };
@@ -228,41 +228,40 @@ static const char * const yytname[] = {   "$","error","$undefined.","IDENTIFIER"
 static const short yyr1[] = {     0,
     51,    51,    51,    51,    51,    51,    52,    53,    53,    54,
     54,    54,    54,    54,    54,    54,    54,    54,    54,    56,
-    57,    55,    55,    58,    58,    58,    59,    60,    61,    62,
-    63,    63,    63,    64,    65,    65,    65,    66,    66,    66,
-    66,    66,    67,    67,    67,    67,    67,    67,    67,    67,
-    68,    68,    68,    69,    69,    69,    69,    69,    69,    69,
-    69,    70,    70,    70,    70,    71,    71,    72,    73,    73
+    57,    55,    58,    58,    58,    59,    60,    61,    62,    63,
+    63,    63,    64,    65,    65,    65,    66,    66,    66,    66,
+    66,    67,    67,    67,    67,    67,    67,    67,    67,    68,
+    68,    68,    69,    69,    69,    69,    69,    69,    69,    69,
+    70,    70,    70,    70,    71,    71,    72,    73,    73
 };
 
 static const short yyr2[] = {     0,
      1,     1,     1,     1,     1,     1,     1,     1,     2,     1,
      1,     1,     1,     1,     1,     1,     1,     2,     1,     0,
-     0,     5,     2,     3,     5,     2,     6,     6,     6,     6,
-     0,     1,     3,     1,     1,     1,     1,     3,     3,     3,
-     3,     3,     3,     3,     3,     3,     3,     3,     3,     3,
-     2,     2,     2,     4,     4,     1,     1,     1,     1,     1,
-     3,     0,     1,     1,     3,     5,     7,     5,     2,     3
+     0,     5,     3,     5,     2,     6,     6,     6,     6,     0,
+     1,     3,     1,     1,     1,     1,     3,     3,     3,     3,
+     3,     3,     3,     3,     3,     3,     3,     3,     3,     2,
+     2,     2,     4,     4,     1,     1,     1,     1,     1,     3,
+     0,     1,     1,     3,     5,     7,     5,     2,     3
 };
 
 static const short yydefact[] = {     0,
-    34,    35,    36,    37,     1,     2,     3,     6,     4,     5,
+    33,    34,    35,    36,     1,     2,     3,     6,     4,     5,
      0,    19,     0,     0,     0,     0,     0,     0,     0,     7,
-     8,    10,    11,    14,    12,    13,    56,    60,    57,    58,
-    59,     0,    15,    16,    17,     0,    52,    53,    51,     0,
-     0,    69,     0,     0,    26,     9,     0,    62,    18,     0,
+     8,    10,    11,    14,    13,    12,    55,    59,    56,    57,
+    58,     0,    15,    16,    17,     0,    51,    52,    50,     0,
+     0,    68,     0,     0,    25,     9,     0,    61,    18,     0,
      0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-     0,     0,    61,     0,     0,    70,    31,     0,    31,    24,
-     0,    63,    64,     0,    38,    39,    40,    41,    42,    43,
-    44,    47,    48,    50,    49,    45,    46,     0,     0,     0,
-    32,     0,     0,     0,    54,    55,     0,    66,    68,    26,
-     0,     0,    25,     0,    65,     0,    20,    27,    28,    33,
-    29,    30,    67,    23,     0,    21,     0,    22,     0,     0,
-     0
+     0,     0,    60,     0,     0,    69,    30,     0,    30,    23,
+     0,    62,    63,     0,    37,    38,    39,    40,    41,    42,
+    43,    46,    47,    49,    48,    44,    45,     0,     0,     0,
+    31,     0,     0,     0,    53,    54,     0,    65,    67,    25,
+     0,     0,    24,     0,    64,     0,    20,    26,    27,    32,
+    29,    28,    66,     0,    21,     0,    22,     0,     0,     0
 };
 
 static const short yydefgoto[] = {    19,
-   119,    20,    21,   109,   115,   117,    22,    23,    24,    25,
+   118,    20,    21,   109,   114,   116,    22,    23,    24,    25,
     26,    92,    27,    28,    29,    30,    31,    32,    74,    33,
     34,    35
 };
@@ -278,14 +277,13 @@ static const short yypact[] = {    71,
    201,-32768,   231,    -9,     3,     3,-32768,-32768,-32768,   252,
    258,   279,   279,   279,   279,   279,   279,    71,    71,     9,
 -32768,    33,   223,    34,-32768,-32768,    99,    16,-32768,   -12,
-     4,    13,-32768,     5,   231,    71,    39,-32768,-32768,-32768,
--32768,-32768,-32768,-32768,    71,    71,    42,-32768,    65,    66,
--32768
+     4,    13,-32768,     5,   231,    71,-32768,-32768,-32768,-32768,
+-32768,-32768,-32768,    71,    71,    39,-32768,    65,    66,-32768
 };
 
 static const short yypgoto[] = {   -49,
--32768,   -45,   -20,   -33,-32768,-32768,   -48,-32768,-32768,-32768,
--32768,    10,   -17,-32768,-32768,-32768,-32768,   -10,-32768,-32768,
+-32768,   -47,   -20,   -34,-32768,-32768,   -48,-32768,-32768,-32768,
+-32768,     2,   -17,-32768,-32768,-32768,-32768,   -10,-32768,-32768,
 -32768,-32768
 };
 
@@ -300,10 +298,10 @@ static const short yytable[] = {    46,
     65,   108,   111,    52,    53,    54,    71,    73,    41,    75,
     76,    77,    78,    79,    80,    81,    82,    83,    84,    85,
     86,    87,    90,   110,   106,   101,   104,    93,   102,   102,
-    47,    48,    67,   114,   120,   121,   118,    98,    99,   116,
-   112,     0,   100,     1,     2,     3,     4,     0,    94,     5,
+    47,    48,    67,   117,   119,   120,   115,    98,    99,   112,
+    94,     0,   100,     1,     2,     3,     4,     0,     0,     5,
      6,     7,     8,     9,    10,   113,   105,     0,     1,     2,
-     3,     4,    11,     0,     0,    46,     0,     0,    12,    13,
+     3,     4,    11,     0,    46,     0,     0,     0,    12,    13,
     14,     1,     2,     3,     4,     0,    15,    11,    16,     0,
     17,    18,     0,    42,    13,    14,     1,     2,     3,     4,
     11,    15,     0,     0,     0,    72,     0,    13,    14,     0,
@@ -336,10 +334,10 @@ static const short yycheck[] = {    20,
     41,    28,    28,    31,    32,    33,    47,    48,    22,    50,
     51,    52,    53,    54,    55,    56,    57,    58,    59,    60,
     61,    62,   102,   102,    39,    23,    23,    68,    26,    26,
-    21,    22,    22,    25,     0,     0,    25,    88,    89,   115,
-   104,    -1,    90,     3,     4,     5,     6,    -1,    69,     9,
+    21,    22,    22,    25,     0,     0,   114,    88,    89,   104,
+    69,    -1,    90,     3,     4,     5,     6,    -1,    -1,     9,
     10,    11,    12,    13,    14,   106,    97,    -1,     3,     4,
-     5,     6,    22,    -1,    -1,   116,    -1,    -1,    28,    29,
+     5,     6,    22,    -1,   115,    -1,    -1,    -1,    28,    29,
     30,     3,     4,     5,     6,    -1,    36,    22,    38,    -1,
     40,    41,    -1,    28,    29,    30,     3,     4,     5,     6,
     22,    36,    -1,    -1,    -1,    12,    -1,    29,    30,    -1,
@@ -899,7 +897,7 @@ case 19:
 { yyval.stmt = new NullStmt(lineNo); ;
     break;}
 case 20:
-{ pSymbolTableMgr->enterScope(); ;
+{ pSymbolTableMgr->enterScope(); yyval.block = new Block(lineNo); ;
     break;}
 case 21:
 { yyval.block = yyvsp[0].block ;
@@ -908,146 +906,143 @@ case 22:
 { pSymbolTableMgr->leaveScope(); ;
     break;}
 case 23:
-{ yyval.block = new Block(lineNo); ;
+{ yyval.stmt = new Variable(yyvsp[-2].data_type, yyvsp[-1].ident, lineNo); pSymbolTableMgr->insertVariableEntry((Variable*)yyval.stmt); ;
     break;}
 case 24:
-{ yyval.stmt = new Variable(yyvsp[-2].data_type, yyvsp[-1].ident, lineNo); pSymbolTableMgr->insertVariableEntry(yyval.stmt, yyvsp[-2].data_type); ;
+{ yyval.stmt = new Variable(yyvsp[-4].data_type, yyvsp[-3].ident, yyvsp[-1].expr, lineNo); pSymbolTableMgr->insertVariableEntry((Variable *)yyval.stmt); ;
     break;}
 case 25:
-{ yyval.stmt = new Variable(yyvsp[-4].data_type, yyvsp[-3].ident, yyvsp[-1].expr, lineNo); pSymbolTableMgr->insertVariableEntry(yyval.stmt, yyvsp[-4].data_type); ;
+{ yyval.stmt = new Variable(yyvsp[-1].data_type, yyvsp[0].ident, lineNo); pSymbolTableMgr->insertVariableEntry((Variable *)yyval.stmt); ;
     break;}
 case 26:
-{ yyval.stmt = new Variable(yyvsp[-1].data_type, yyvsp[0].ident, lineNo); pSymbolTableMgr->insertVariableEntry(yyval.stmt, yyvsp[-1].data_type); ;
-    break;}
-case 27:
 {
                 yyerror("WARNING: Main Declaration not allowed\n");
             ;
     break;}
-case 28:
+case 27:
 { 
                 pMain = new MainDefn(yyvsp[-5].data_type, *yyvsp[-2].varvec, yyvsp[0].block, lineNo); 
                 yyval.stmt = pMain; 
             ;
     break;}
+case 28:
+{ 
+                yyval.stmt = new FuncDefn(yyvsp[-5].data_type, yyvsp[-4].ident, *yyvsp[-2].varvec, yyvsp[0].block, lineNo);
+                pSymbolTableMgr->insertFuncDefnEntry((FuncDefn *)yyval.stmt);
+            ;
+    break;}
 case 29:
 { 
                 yyval.stmt = new FuncDecl(yyvsp[-5].data_type, yyvsp[-4].ident, *yyvsp[-2].varvec, lineNo);
-                pSymbolTableMgr->insertFunctionEntry(yyval.stmt, *yyvsp[-2].varvec, yyvsp[-5].data_type);
+                pSymbolTableMgr->insertFuncDeclEntry((FuncDecl *)yyval.stmt);
             ;
     break;}
 case 30:
-{ 
-                yyval.stmt = new FuncDefn(yyvsp[-5].data_type, yyvsp[-4].ident, *yyvsp[-2].varvec, yyvsp[0].block, lineNo);
-                pSymbolTableMgr->insertFunctionEntry(yyval.stmt, *yyvsp[-2].varvec, yyvsp[-5].data_type);
-            ;
-    break;}
-case 31:
 { yyval.varvec = new VariableList(lineNo); ;
     break;}
-case 32:
+case 31:
 { yyval.varvec = new VariableList(); yyval.varvec->push_back(yyvsp[0].var_decl); ;
     break;}
-case 33:
+case 32:
 { yyvsp[-2].varvec->push_back(yyvsp[0].var_decl); ;
     break;}
-case 34:
+case 33:
 { yyval.ident = new Identifier(*yyvsp[0].string, lineNo); ;
     break;}
-case 35:
+case 34:
 { yyval.expr = new Integer(atol(yyvsp[0].string->c_str()), lineNo); ;
     break;}
-case 36:
+case 35:
 { yyval.expr = new Double(atof(yyvsp[0].string->c_str()), lineNo); ;
     break;}
-case 37:
+case 36:
 { yyval.expr = new Float((float)(atof(yyvsp[0].string->c_str())), lineNo); ;
     break;}
-case 38:
+case 37:
 { yyval.expr = new AdditionBinaryExpr(yyvsp[-2].expr, yyvsp[0].expr, lineNo); ;
     break;}
-case 39:
+case 38:
 { yyval.expr = new SubtractionBinaryExpr(yyvsp[-2].expr, yyvsp[0].expr, lineNo); ;
     break;}
-case 40:
+case 39:
 { yyval.expr = new MultiplicationBinaryExpr(yyvsp[-2].expr, yyvsp[0].expr, lineNo); ;
     break;}
-case 41:
+case 40:
 { yyval.expr = new DivisionBinaryExpr(yyvsp[-2].expr, yyvsp[0].expr, lineNo); ;
     break;}
-case 42:
+case 41:
 { yyval.expr = new ModulusBinaryExpr(yyvsp[-2].expr, yyvsp[0].expr, lineNo); ;
     break;}
-case 43:
+case 42:
 { yyval.expr = new OrBinaryExpr(yyvsp[-2].expr, yyvsp[0].expr, lineNo); ;
     break;}
-case 44:
+case 43:
 { yyval.expr = new AndBinaryExpr(yyvsp[-2].expr, yyvsp[0].expr, lineNo); ;
     break;}
-case 45:
+case 44:
 { yyval.expr = new EQCompareBinaryExpr(yyvsp[-2].expr, yyvsp[0].expr, lineNo); ;
     break;}
-case 46:
+case 45:
 { yyval.expr = new NECompareBinaryExpr(yyvsp[-2].expr, yyvsp[0].expr, lineNo); ;
     break;}
-case 47:
+case 46:
 { yyval.expr = new LECompareBinaryExpr(yyvsp[-2].expr, yyvsp[0].expr, lineNo); ;
     break;}
-case 48:
+case 47:
 { yyval.expr = new LTCompareBinaryExpr(yyvsp[-2].expr, yyvsp[0].expr, lineNo); ;
     break;}
-case 49:
+case 48:
 { yyval.expr = new GECompareBinaryExpr(yyvsp[-2].expr, yyvsp[0].expr, lineNo); ;
     break;}
-case 50:
+case 49:
 { yyval.expr = new GTCompareBinaryExpr(yyvsp[-2].expr, yyvsp[0].expr, lineNo); ;
     break;}
-case 51:
+case 50:
 { yyval.expr = new NegateUnaryExpr(yyvsp[0].expr, lineNo); ;
     break;}
-case 52:
+case 51:
 { yyval.expr = new AdditionUnaryExpr(yyvsp[0].expr, lineNo); ;
     break;}
-case 53:
+case 52:
 { yyval.expr = new SubtractUnaryExpr(yyvsp[0].expr, lineNo); ;
     break;}
-case 54:
+case 53:
 { yyval.expr = new Assignment(yyvsp[-3].ident, yyvsp[-1].expr, lineNo); ;
     break;}
-case 55:
+case 54:
 { yyval.expr = new FunctionCall(yyvsp[-3].ident, *yyvsp[-1].exprvec, lineNo); ;
     break;}
-case 56:
+case 55:
 { yyval.ident = yyvsp[0].ident; ;
     break;}
-case 61:
+case 60:
 { yyval.expr = yyvsp[-1].expr; ;
+    break;}
+case 61:
+{ yyval.exprvec = new ExprList(lineNo); ;
     break;}
 case 62:
 { yyval.exprvec = new ExprList(lineNo); ;
     break;}
 case 63:
-{ yyval.exprvec = new ExprList(lineNo); ;
-    break;}
-case 64:
 { yyval.exprvec = new ExprList(lineNo); yyval.exprvec->push_back(yyvsp[0].expr); ;
     break;}
-case 65:
+case 64:
 { yyvsp[-2].exprvec->push_back(yyvsp[0].expr); ;
     break;}
-case 66:
+case 65:
 { yyval.stmt = new IfStmt(yyvsp[-2].expr, yyvsp[0].stmt, NULL, lineNo); ;
     break;}
-case 67:
+case 66:
 { yyval.stmt = new IfStmt(yyvsp[-4].expr, yyvsp[-2].stmt, yyvsp[0].stmt, lineNo); ;
     break;}
-case 68:
+case 67:
 { yyval.stmt = new WhileStmt(yyvsp[-2].expr, yyvsp[0].stmt, lineNo); ;
     break;}
-case 69:
+case 68:
 { yyval.stmt = new ReturnStmt(NULL, lineNo); ;
     break;}
-case 70:
+case 69:
 { yyval.stmt = new ReturnStmt(yyvsp[-1].expr, lineNo); ;
     break;}
 }

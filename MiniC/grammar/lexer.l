@@ -19,6 +19,7 @@ L                       [a-zA-Z_]
 #define SAVE_TOKEN (yylval.string = new std::string(yytext, yyleng))
 #define TOKEN(t) (yylval.token = t)
 
+#define YY_NEVER_INTERACTIVE 1 
 #define isatty _isatty
 
 char linebuf[50];

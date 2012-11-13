@@ -24,19 +24,33 @@ void SymbolTableMgr::leaveScope()
     }
 }
 
-bool SymbolTableMgr::insertFunctionEntry(
-    Stmt* pStmt,
-    std::vector<Variable*> args,
-    DataType* pReturnType)
+bool SymbolTableMgr::insertFuncDefnEntry(
+    FuncDefn* pFuncDefn)
 {
-    return m_pCurrentSymbolTable->insertFunctionEntry(pStmt, args, pReturnType);
+    return m_pCurrentSymbolTable->insertFuncDefnEntry(pFuncDefn);
+    m_pCurrentFunc = pFuncDefn;
+}
+
+bool SymbolTableMgr::insertFuncDeclEntry(
+    FuncDecl* pFuncDecl)
+{
+    return m_pCurrentSymbolTable->insertFuncDeclEntry(pFuncDecl);
 }
 
 bool SymbolTableMgr::insertVariableEntry(
-    Stmt* pStmt,
-    DataType* pType)
+    Variable* pVariable)
 {
-    return m_pCurrentSymbolTable->insertVariableEntry(pStmt, pType);
+    return m_pCurrentSymbolTable->insertVariableEntry(pVariable);
+}
+
+void SymbolTableMgr::setCurrentFunc(FuncDefn* pFuncDefn)
+{
+    m_pCurrentFunc = pFuncDefn;
+}
+
+FuncDefn* SymbolTableMgr::getCurrentFunc()
+{
+    return m_pCurrentFunc;
 }
 
 SymbolTable::SymbolTable(
@@ -56,24 +70,23 @@ SymbolTable::SymbolTable(
 }
 
 // Search the symbol table recursively for the function
-FunctionEntry* SymbolTable::getFunctionEntry(
+FuncDefn* SymbolTable::getFuncDefnEntry(
     Stmt* pStmt)
 {
-    Log().Get(logDEBUG) << "Looking for Function: " << pStmt->getIdentifier()->getName() << std::endl;
+    Log().Get(logDEBUG) << "Looking for Function: " << pStmt->getIdentifier()->getName() << endl;
 
-    std::map<std::string, SymbolEntry*>::iterator iter = m_entries.find(pStmt->getIdentifier()->getName());
+    map<string, FuncDefn*>::iterator iter = m_funcDefnList.find(pStmt->getIdentifier()->getName());
 
-    if (iter != m_entries.end())
+    if (iter != m_funcDefnList.end())
     {
-        SymbolEntry* newSymbol = iter->second;
-        FunctionEntry* newFunction = dynamic_cast<FunctionEntry*>(newSymbol);
+        FuncDefn* newFunction = iter->second;
         return newFunction;
     }
     else
     {
         if (m_pParent != NULL)
         {
-            return m_pParent->getFunctionEntry(pStmt);
+            return m_pParent->getFuncDefnEntry(pStmt);
         }
         else
         {
@@ -82,17 +95,16 @@ FunctionEntry* SymbolTable::getFunctionEntry(
     }
 }
 
-VariableEntry* SymbolTable::getVariableEntry(
+Variable* SymbolTable::getVariableEntry(
     Stmt* pStmt)
 {
-    Log().Get(logDEBUG) << "Looking for Function: " << pStmt->getIdentifier()->getName() << std::endl;
+    Log().Get(logDEBUG) << "Looking for Function: " << pStmt->getIdentifier()->getName() << endl;
 
-    std::map<std::string, SymbolEntry*>::iterator iter = m_entries.find(pStmt->getIdentifier()->getName());
+    std::map<std::string, Variable*>::iterator iter = m_entries.find(pStmt->getIdentifier()->getName());
 
     if (iter != m_entries.end())
     {
-        SymbolEntry* newSymbol = iter->second;
-        VariableEntry* newVariable = dynamic_cast<VariableEntry*>(newSymbol);
+        Variable* newVariable = iter->second;
         return newVariable;
     }
     else
@@ -108,29 +120,30 @@ VariableEntry* SymbolTable::getVariableEntry(
     }
 }
 
-bool SymbolTable::insertFunctionEntry(
-    Stmt* pStmt,
-    std::vector<Variable*> args,
-    DataType* pReturnType)
+bool SymbolTable::insertFuncDefnEntry(
+    FuncDefn* pFuncDefn)
 {
-    Log().Get(logDEBUG) << "Inserting Function: " << pStmt->getIdentifier()->getName() << std::endl;
+    Log().Get(logDEBUG) << "Inserting Function Definition: " << pFuncDefn->getIdentifier()->getName() << std::endl;
 
-    FunctionEntry* pNewEntry = new FunctionEntry(pStmt, args, pReturnType);
+    m_funcDefnList.insert(make_pair(pFuncDefn->getIdentifier()->getName(), pFuncDefn));
 
-    typedef std::pair<std::string, SymbolEntry*> EntryPair;
-    std::pair< std::map<std::string, SymbolEntry*>::iterator, bool> pair_return;
+    return true;
+}
 
-    pair_return = m_entries.insert(EntryPair(pStmt->getIdentifier()->getName(), pNewEntry));
+bool SymbolTable::insertFuncDeclEntry(
+    FuncDecl* pFuncDecl)
+{
+    Log().Get(logDEBUG) << "Inserting Function Declaration: " << pFuncDecl->getIdentifier()->getName() << std::endl;
 
-    return pair_return.second;
+    m_funcDeclList.insert(make_pair(pFuncDecl->getIdentifier()->getName(), pFuncDecl));
+
+    return true;
 }
 
 bool SymbolTable::insertVariableEntry(
-    Stmt* pStmt,
-    DataType* pType)
+    Variable* pVariable)
 {
-    typedef std::pair<std::string, SymbolEntry*> EntryPair;
-    std::pair< std::map<std::string, SymbolEntry*>::iterator, bool> pair_return;
+    PairReturn pair_return;
     bool global;
 
     int offset = 0;
@@ -144,11 +157,11 @@ bool SymbolTable::insertVariableEntry(
         offset = getNewOffset();
     }
 
-    VariableEntry* pNewEntry = new VariableEntry(pStmt, pType, global, offset);
+    Log().Get(logDEBUG) << "Inserting Variable: " << pVariable->getIdentifier()->getName() << std::endl;
 
-    Log().Get(logDEBUG) << "Inserting Variable: " << pStmt->getIdentifier()->getName() << std::endl;
+    auto p = make_pair(pVariable->getIdentifier()->getName(), pVariable);
 
-    pair_return = m_entries.insert(EntryPair(pStmt->getIdentifier()->getName(), pNewEntry));
+    pair_return = m_entries.insert(p);
 
     return pair_return.second;
 }
@@ -187,44 +200,4 @@ void SymbolTable::setMaxLocalCount(int newLocalCount)
 int SymbolTable::getDepth()
 {
     return m_depth;
-}
-
-DataType* SymbolEntry::getType()
-{
-    return m_pType;
-}
-
-FunctionEntry::FunctionEntry(
-    Stmt* pStmt,
-    std::vector<Variable*> args,
-    DataType* pReturnType)
-    : SymbolEntry(pStmt, pReturnType),
-      m_args(args)
-{
-}
-
-std::vector<Variable*> FunctionEntry::getArgs()
-{
-    return m_args;
-}
-
-VariableEntry::VariableEntry(
-    Stmt*        pStmt,
-    DataType*    pType,
-    bool         global,
-    int          index)
-    : SymbolEntry(pStmt, pType),
-      m_global(global),
-      m_index(index)
-{
-}
-
-int VariableEntry::getIndex()
-{
-    return m_index;
-}
-
-bool VariableEntry::isGlobal()
-{
-    return m_global;
 }

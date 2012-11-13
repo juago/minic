@@ -8,6 +8,8 @@
 #include <string>
 #include <sstream>
 
+using namespace std;
+
 #define stringify( name ) #name
 
 #define NEWLINE "\n"

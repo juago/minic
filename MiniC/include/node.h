@@ -642,6 +642,10 @@ public:
 
     const Identifier* getIdentifier() { return m_pId; }
     const DataType*   getReturnType() { return m_pReturnType; }
+    void setBlock(Block* pBlock)
+    {
+        m_pBlock = pBlock;
+    }
 };
 
 class MainDefn : public FuncDefn

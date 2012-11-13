@@ -176,7 +176,18 @@ block : LBRACE                                      { $$ = new Block(lineNo); pS
         RBRACE                                      { pSymbolTableMgr->leaveScope(); }
       ;
 
-var_decl : data_type ident SEMICOLON                { $$ = new Variable($1, $2, lineNo); pSymbolTableMgr->insertVariableEntry((Variable*)$$); }
+var_decl : data_type ident SEMICOLON                
+		   {
+				Stmt* pStmt = pSymbolTableMgr->isIdentifierPresent($2->getName());
+				
+				if (pStmt != NULL)
+				{
+					Log().Get(logERROR) << "Symbol \'" << $2->getName() << "\' on line:" << lineNo << " is not unique" << endl;
+				}
+
+			    $$ = new Variable($1, $2, lineNo);
+				pSymbolTableMgr->insertVariableEntry((Variable*)$$); 
+		   }
          | data_type ident EQUAL expr SEMICOLON     { $$ = new Variable($1, $2, $4, lineNo); pSymbolTableMgr->insertVariableEntry((Variable *)$$); }
          | data_type ident                          { $$ = new Variable($1, $2, lineNo); pSymbolTableMgr->insertVariableEntry((Variable *)$$); }
          ;

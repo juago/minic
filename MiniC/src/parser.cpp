@@ -208,11 +208,11 @@ static const short yyrhs[] = {     9,
 static const short yyrline[] = { 0,
    147,   148,   149,   150,   151,   152,   155,   158,   159,   162,
    163,   164,   165,   166,   167,   168,   169,   170,   171,   174,
-   175,   176,   179,   180,   181,   184,   190,   197,   204,   211,
-   212,   213,   216,   219,   220,   221,   225,   226,   227,   228,
-   229,   231,   232,   233,   234,   235,   236,   237,   238,   241,
-   242,   243,   245,   246,   247,   248,   249,   250,   251,   252,
-   255,   256,   257,   258,   261,   262,   265,   268,   269
+   175,   176,   179,   191,   192,   195,   201,   208,   215,   222,
+   223,   224,   227,   230,   231,   232,   236,   237,   238,   239,
+   240,   242,   243,   244,   245,   246,   247,   248,   249,   252,
+   253,   254,   256,   257,   258,   259,   260,   261,   262,   263,
+   266,   267,   268,   269,   272,   273,   276,   279,   280
 };
 
 static const char * const yytname[] = {   "$","error","$undefined.","IDENTIFIER",
@@ -908,7 +908,17 @@ case 22:
 { pSymbolTableMgr->leaveScope(); ;
     break;}
 case 23:
-{ yyval.stmt = new Variable(yyvsp[-2].data_type, yyvsp[-1].ident, lineNo); pSymbolTableMgr->insertVariableEntry((Variable*)yyval.stmt); ;
+{
+				Stmt* pStmt = pSymbolTableMgr->isIdentifierPresent(yyvsp[-1].ident->getName());
+				
+				if (pStmt != NULL)
+				{
+					Log().Get(logERROR) << "Symbol \'" << yyvsp[-1].ident->getName() << "\' on line:" << lineNo << " is not unique" << endl;
+				}
+
+			    yyval.stmt = new Variable(yyvsp[-2].data_type, yyvsp[-1].ident, lineNo);
+				pSymbolTableMgr->insertVariableEntry((Variable*)yyval.stmt); 
+		   ;
     break;}
 case 24:
 { yyval.stmt = new Variable(yyvsp[-4].data_type, yyvsp[-3].ident, yyvsp[-1].expr, lineNo); pSymbolTableMgr->insertVariableEntry((Variable *)yyval.stmt); ;

@@ -3,14 +3,11 @@
     #include <cstdlib>
 
     #include "node.h"
-    #include "symbol.h"
 
     using namespace std;
 
     Block*    pProgramBlock; /* the top level root node of our final AST */
     MainDefn* pMain;
-
-    SymbolTableMgr* pSymbolTableMgr = new SymbolTableMgr();
 
     extern int yylex();
     extern unsigned int lineNo;
@@ -155,8 +152,8 @@ data_type : INT                                     { $$ = new DataType(_INT_, l
 program : stmts                                     { /* pProgramBlock = $1; */ }
         ;
         
-stmts : stmt                                        { pSymbolTableMgr->insertStmtEntry($<stmt>1); }
-      | stmts stmt                                  { pSymbolTableMgr->insertStmtEntry($<stmt>2); }
+stmts : stmt                                        { /* pSymbolTableMgr->insertStmtEntry($<stmt>1); */ }
+      | stmts stmt                                  { /* pSymbolTableMgr->insertStmtEntry($<stmt>2); */ }
       ;
 
 stmt : var_decl 
@@ -171,25 +168,27 @@ stmt : var_decl
      | SEMICOLON                                    { $$ = new NullStmt(lineNo); }
      ;
 
-block : LBRACE                                      { $$ = new Block(lineNo); pSymbolTableMgr->enterScope($$); }
+block : LBRACE                                      { $$ = new Block(lineNo); /* pSymbolTableMgr->enterScope($$); */ }
         stmts										{ $$ = $3 }
-        RBRACE                                      { pSymbolTableMgr->leaveScope(); }
+        RBRACE                                      { /* pSymbolTableMgr->leaveScope(); */ }
       ;
 
 var_decl : data_type ident SEMICOLON                
 		   {
+				/*
 				Stmt* pStmt = pSymbolTableMgr->isIdentifierPresent($2->getName());
 				
 				if (pStmt != NULL)
 				{
 					Log().Get(logERROR) << "Symbol \'" << $2->getName() << "\' on line:" << lineNo << " is not unique" << endl;
 				}
+				*/
 
 			    $$ = new Variable($1, $2, lineNo);
-				pSymbolTableMgr->insertVariableEntry((Variable*)$$); 
+				/* pSymbolTableMgr->insertVariableEntry((Variable*)$$);  */
 		   }
-         | data_type ident EQUAL expr SEMICOLON     { $$ = new Variable($1, $2, $4, lineNo); pSymbolTableMgr->insertVariableEntry((Variable *)$$); }
-         | data_type ident                          { $$ = new Variable($1, $2, lineNo); pSymbolTableMgr->insertVariableEntry((Variable *)$$); }
+         | data_type ident EQUAL expr SEMICOLON     { $$ = new Variable($1, $2, $4, lineNo); /* pSymbolTableMgr->insertVariableEntry((Variable *)$$); */ }
+         | data_type ident                          { $$ = new Variable($1, $2, lineNo); /* pSymbolTableMgr->insertVariableEntry((Variable *)$$); */ }
          ;
 
 main_decl : data_type MAIN LPAREN func_args RPAREN SEMICOLON 
@@ -208,14 +207,14 @@ main_defn : data_type MAIN LPAREN func_args RPAREN block
 func_defn : data_type ident LPAREN func_args RPAREN block
             { 
                 $$ = new FuncDefn($1, $2, *$4, $6, lineNo);
-                pSymbolTableMgr->insertFuncDefnEntry((FuncDefn *)$$);
+                /* pSymbolTableMgr->insertFuncDefnEntry((FuncDefn *)$$); */
             }
           ;
 
 func_decl : data_type ident LPAREN func_args RPAREN SEMICOLON 
             { 
                 $$ = new FuncDecl($1, $2, *$4, lineNo);
-                pSymbolTableMgr->insertFuncDeclEntry((FuncDecl *)$$);
+                /* pSymbolTableMgr->insertFuncDeclEntry((FuncDecl *)$$); */
             }
           ;
                   

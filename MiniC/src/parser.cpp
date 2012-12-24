@@ -58,14 +58,11 @@
     #include <cstdlib>
 
     #include "node.h"
-    #include "symbol.h"
 
     using namespace std;
 
     Block*    pProgramBlock; /* the top level root node of our final AST */
     MainDefn* pMain;
-
-    SymbolTableMgr* pSymbolTableMgr = new SymbolTableMgr();
 
     extern int yylex();
     extern unsigned int lineNo;
@@ -206,13 +203,13 @@ static const short yyrhs[] = {     9,
 
 #if YYDEBUG != 0
 static const short yyrline[] = { 0,
-   147,   148,   149,   150,   151,   152,   155,   158,   159,   162,
-   163,   164,   165,   166,   167,   168,   169,   170,   171,   174,
-   175,   176,   179,   191,   192,   195,   201,   208,   215,   222,
-   223,   224,   227,   230,   231,   232,   236,   237,   238,   239,
-   240,   242,   243,   244,   245,   246,   247,   248,   249,   252,
-   253,   254,   256,   257,   258,   259,   260,   261,   262,   263,
-   266,   267,   268,   269,   272,   273,   276,   279,   280
+   144,   145,   146,   147,   148,   149,   152,   155,   156,   159,
+   160,   161,   162,   163,   164,   165,   166,   167,   168,   171,
+   172,   173,   176,   190,   191,   194,   200,   207,   214,   221,
+   222,   223,   226,   229,   230,   231,   235,   236,   237,   238,
+   239,   241,   242,   243,   244,   245,   246,   247,   248,   251,
+   252,   253,   255,   256,   257,   258,   259,   260,   261,   262,
+   265,   266,   267,   268,   271,   272,   275,   278,   279
 };
 
 static const char * const yytname[] = {   "$","error","$undefined.","IDENTIFIER",
@@ -878,10 +875,10 @@ case 7:
 { /* pProgramBlock = $1; */ ;
     break;}
 case 8:
-{ pSymbolTableMgr->insertStmtEntry(yyvsp[0].stmt); ;
+{ /* pSymbolTableMgr->insertStmtEntry($<stmt>1); */ ;
     break;}
 case 9:
-{ pSymbolTableMgr->insertStmtEntry(yyvsp[0].stmt); ;
+{ /* pSymbolTableMgr->insertStmtEntry($<stmt>2); */ ;
     break;}
 case 15:
 { yyval.stmt = yyvsp[0].stmt; ;
@@ -899,32 +896,34 @@ case 19:
 { yyval.stmt = new NullStmt(lineNo); ;
     break;}
 case 20:
-{ yyval.block = new Block(lineNo); pSymbolTableMgr->enterScope(yyval.block); ;
+{ yyval.block = new Block(lineNo); /* pSymbolTableMgr->enterScope($$); */ ;
     break;}
 case 21:
 { yyval.block = yyvsp[0].block ;
     break;}
 case 22:
-{ pSymbolTableMgr->leaveScope(); ;
+{ /* pSymbolTableMgr->leaveScope(); */ ;
     break;}
 case 23:
 {
-				Stmt* pStmt = pSymbolTableMgr->isIdentifierPresent(yyvsp[-1].ident->getName());
+				/*
+				Stmt* pStmt = pSymbolTableMgr->isIdentifierPresent($2->getName());
 				
 				if (pStmt != NULL)
 				{
-					Log().Get(logERROR) << "Symbol \'" << yyvsp[-1].ident->getName() << "\' on line:" << lineNo << " is not unique" << endl;
+					Log().Get(logERROR) << "Symbol \'" << $2->getName() << "\' on line:" << lineNo << " is not unique" << endl;
 				}
+				*/
 
 			    yyval.stmt = new Variable(yyvsp[-2].data_type, yyvsp[-1].ident, lineNo);
-				pSymbolTableMgr->insertVariableEntry((Variable*)yyval.stmt); 
+				/* pSymbolTableMgr->insertVariableEntry((Variable*)$$);  */
 		   ;
     break;}
 case 24:
-{ yyval.stmt = new Variable(yyvsp[-4].data_type, yyvsp[-3].ident, yyvsp[-1].expr, lineNo); pSymbolTableMgr->insertVariableEntry((Variable *)yyval.stmt); ;
+{ yyval.stmt = new Variable(yyvsp[-4].data_type, yyvsp[-3].ident, yyvsp[-1].expr, lineNo); /* pSymbolTableMgr->insertVariableEntry((Variable *)$$); */ ;
     break;}
 case 25:
-{ yyval.stmt = new Variable(yyvsp[-1].data_type, yyvsp[0].ident, lineNo); pSymbolTableMgr->insertVariableEntry((Variable *)yyval.stmt); ;
+{ yyval.stmt = new Variable(yyvsp[-1].data_type, yyvsp[0].ident, lineNo); /* pSymbolTableMgr->insertVariableEntry((Variable *)$$); */ ;
     break;}
 case 26:
 {
@@ -940,13 +939,13 @@ case 27:
 case 28:
 { 
                 yyval.stmt = new FuncDefn(yyvsp[-5].data_type, yyvsp[-4].ident, *yyvsp[-2].varvec, yyvsp[0].block, lineNo);
-                pSymbolTableMgr->insertFuncDefnEntry((FuncDefn *)yyval.stmt);
+                /* pSymbolTableMgr->insertFuncDefnEntry((FuncDefn *)$$); */
             ;
     break;}
 case 29:
 { 
                 yyval.stmt = new FuncDecl(yyvsp[-5].data_type, yyvsp[-4].ident, *yyvsp[-2].varvec, lineNo);
-                pSymbolTableMgr->insertFuncDeclEntry((FuncDecl *)yyval.stmt);
+                /* pSymbolTableMgr->insertFuncDeclEntry((FuncDecl *)$$); */
             ;
     break;}
 case 30:

@@ -6,6 +6,8 @@
 #include <vector>
 #include <visitor.h>
 
+#include <llvm/Value.h>
+
 #include "logger.h"
 #include "utils.h"
 
@@ -51,6 +53,7 @@ public:
     virtual ~Node() { }
 
     virtual void accept(Visitor* pVisitor) = 0;
+    virtual void codeGen(
 
 private:
     ull m_lineNo;

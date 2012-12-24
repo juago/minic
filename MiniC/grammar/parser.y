@@ -149,11 +149,11 @@ data_type : INT                                     { $$ = new DataType(_INT_, l
           | VOID                                    { $$ = new DataType(_VOID_, lineNo); delete $1; }
           ;
 
-program : stmts                                     { /* pProgramBlock = $1; */ }
+program : stmts
         ;
         
-stmts : stmt                                        { /* pSymbolTableMgr->insertStmtEntry($<stmt>1); */ }
-      | stmts stmt                                  { /* pSymbolTableMgr->insertStmtEntry($<stmt>2); */ }
+stmts : stmt                                        { }
+      | stmts stmt                                  { }
       ;
 
 stmt : var_decl 
@@ -168,27 +168,17 @@ stmt : var_decl
      | SEMICOLON                                    { $$ = new NullStmt(lineNo); }
      ;
 
-block : LBRACE                                      { $$ = new Block(lineNo); /* pSymbolTableMgr->enterScope($$); */ }
-        stmts										{ $$ = $3 }
-        RBRACE                                      { /* pSymbolTableMgr->leaveScope(); */ }
+block : LBRACE                                      { $$ = new Block(lineNo); }
+        stmts					                    { $$ = $3 }
+        RBRACE                                      { }
       ;
 
 var_decl : data_type ident SEMICOLON                
 		   {
-				/*
-				Stmt* pStmt = pSymbolTableMgr->isIdentifierPresent($2->getName());
-				
-				if (pStmt != NULL)
-				{
-					Log().Get(logERROR) << "Symbol \'" << $2->getName() << "\' on line:" << lineNo << " is not unique" << endl;
-				}
-				*/
-
 			    $$ = new Variable($1, $2, lineNo);
-				/* pSymbolTableMgr->insertVariableEntry((Variable*)$$);  */
 		   }
-         | data_type ident EQUAL expr SEMICOLON     { $$ = new Variable($1, $2, $4, lineNo); /* pSymbolTableMgr->insertVariableEntry((Variable *)$$); */ }
-         | data_type ident                          { $$ = new Variable($1, $2, lineNo); /* pSymbolTableMgr->insertVariableEntry((Variable *)$$); */ }
+         | data_type ident EQUAL expr SEMICOLON     { $$ = new Variable($1, $2, $4, lineNo); }
+         | data_type ident                          { $$ = new Variable($1, $2, lineNo); }
          ;
 
 main_decl : data_type MAIN LPAREN func_args RPAREN SEMICOLON 
@@ -207,14 +197,12 @@ main_defn : data_type MAIN LPAREN func_args RPAREN block
 func_defn : data_type ident LPAREN func_args RPAREN block
             { 
                 $$ = new FuncDefn($1, $2, *$4, $6, lineNo);
-                /* pSymbolTableMgr->insertFuncDefnEntry((FuncDefn *)$$); */
             }
           ;
 
 func_decl : data_type ident LPAREN func_args RPAREN SEMICOLON 
             { 
                 $$ = new FuncDecl($1, $2, *$4, lineNo);
-                /* pSymbolTableMgr->insertFuncDeclEntry((FuncDecl *)$$); */
             }
           ;
                   

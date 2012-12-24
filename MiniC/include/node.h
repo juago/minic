@@ -15,6 +15,11 @@ class Stmt;
 class Expr;
 class Variable;
 
+//@todo: This is done since including codegen.h is causing compile errors with llvm. 
+// Anyways it's better to just have a forward declaration than to include the entire
+// llvm libraries from here.
+class CodeGenContext;
+
 // Visitor forward declarations
 class Visitor;
 
@@ -23,6 +28,8 @@ typedef std::vector<Expr*> ExprList;
 typedef std::vector<Variable*> VariableList;
 
 typedef unsigned long long ull;
+
+using namespace llvm;
 
 enum EnumDataType
 {
@@ -53,7 +60,7 @@ public:
     virtual ~Node() { }
 
     virtual void accept(Visitor* pVisitor) = 0;
-    virtual void codeGen(
+    virtual Value* codeGen(CodeGenContext& context) { return NULL; }
 
 private:
     ull m_lineNo;

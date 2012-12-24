@@ -52,11 +52,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\include;$(LLVM_DIR)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(LLVM_DIR)\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>LLVMAnalysis.lib;LLVMArchive.lib;LLVMAsmParser.lib;LLVMAsmPrinter.lib;LLVMBitReader.lib;LLVMBitWriter.lib;LLVMCodeGen.lib;LLVMCore.lib;LLVMDebugInfo.lib;LLVMExecutionEngine.lib;LLVMInstCombine.lib;LLVMInstrumentation.lib;LLVMInterpreter.lib;LLVMJIT.lib;LLVMLinker.lib;LLVMMC.lib;LLVMMCDisassembler.lib;LLVMMCJIT.lib;LLVMMCParser.lib;LLVMObject.lib;LLVMRuntimeDyld.lib;LLVMScalarOpts.lib;LLVMSelectionDAG.lib;LLVMSupport.lib;LLVMTableGen.lib;LLVMTarget.lib;LLVMTransformUtils.lib;LLVMVectorize.lib;LLVMX86AsmParser.lib;LLVMX86AsmPrinter.lib;LLVMX86CodeGen.lib;LLVMX86Desc.lib;LLVMX86Disassembler.lib;LLVMX86Info.lib;LLVMX86Utils.lib;LLVMipa.lib;LLVMipo.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -77,6 +79,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\codegen.cpp" />
     <ClCompile Include="src\lexer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\node.cpp" />
@@ -91,6 +94,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\codegen.h" />
     <ClInclude Include="include\logger.h" />
     <ClInclude Include="include\node.h" />
     <ClInclude Include="include\output.h" />

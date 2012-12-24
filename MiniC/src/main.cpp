@@ -1,5 +1,6 @@
 #include <iostream>
 #include "node.h"
+#include "codegen.h"
 
 using namespace std;
 
@@ -29,6 +30,9 @@ int main(int argc, char **argv)
     {
         std::cout << "Error no main function defined" << std::endl;
     }
+
+    CodeGenContext context;
+    context.generateCode(*pProgramBlock);
 
     system("pause");
     return 0;

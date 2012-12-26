@@ -149,12 +149,12 @@ data_type : INT                                     { $$ = new DataType(_INT_, l
           | VOID                                    { $$ = new DataType(_VOID_, lineNo); delete $1; }
           ;
 
-program : stmts
+program : stmts { pProgramBlock = $1; }
         ;
-        
-stmts : stmt                                        { }
-      | stmts stmt                                  { }
-      ;
+
+stmts : stmt { $$ = new Block(lineNo); $$->AddStmt($<stmt>1); }
+	  | stmts stmt { $1->AddStmt($<stmt>2); }
+	  ;
 
 stmt : var_decl 
      | main_decl
@@ -168,10 +168,9 @@ stmt : var_decl
      | SEMICOLON                                    { $$ = new NullStmt(lineNo); }
      ;
 
-block : LBRACE                                      { $$ = new Block(lineNo); }
-        stmts					                    { $$ = $3 }
-        RBRACE                                      { }
-      ;
+block : LBRACE stmts RBRACE { $$ = $2; }
+	  | LBRACE RBRACE { $$ = new Block(lineNo); }
+	  ;
 
 var_decl : data_type ident SEMICOLON                
 		   {

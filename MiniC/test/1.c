@@ -1,8 +1,8 @@
+int glo = 10;
+
 int testfunc(int g)
 {
-    int a = 45;
-    int b = 10;
-	char b;
+    int a = 5 * 3;
     return a;
 }
 

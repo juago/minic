@@ -23,26 +23,35 @@ using namespace llvm;
 
 class NBlock;
 
-class CodeGenBlock {
+class CodeGenBlock 
+{
 public:
     BasicBlock *block;
     std::map<std::string, Value*> locals;
 };
 
 class CodeGenContext {
-    std::stack<CodeGenBlock *> blocks;
-    Function *mainFunction;
-
 public:
-    Module *module;
-    CodeGenContext() { module = new Module("main", getGlobalContext()); }
+    CodeGenContext() 
+    { 
+        m_pModule = new Module("main", getGlobalContext()); 
+        m_pBuilder = new IRBuilder<>(getGlobalContext());
+    }
     
     void generateCode(Block& root);
     GenericValue runCode();
-    std::map<std::string, Value*>& locals() { return blocks.top()->locals; }
-    BasicBlock *currentBlock() { return blocks.top()->block; }
-    void pushBlock(BasicBlock *block) { blocks.push(new CodeGenBlock()); blocks.top()->block = block; }
-    void popBlock() { CodeGenBlock *top = blocks.top(); blocks.pop(); delete top; }
+    std::map<std::string, Value*>& locals() { return m_blocks.top()->locals; }
+    BasicBlock* currentBlock() { return m_blocks.top()->block; }
+    void pushBlock(BasicBlock *block) { m_blocks.push(new CodeGenBlock()); m_blocks.top()->block = block; }
+    void popBlock() { CodeGenBlock *top = m_blocks.top(); m_blocks.pop(); delete top; }
+    Module* getModule() const { return m_pModule; }
+    IRBuilder<>* getBuilder() const { return m_pBuilder; }
+
+private:
+    std::stack<CodeGenBlock *> m_blocks;
+    Function*                  m_pMainFunction;
+    Module*                    m_pModule;
+    IRBuilder<>*               m_pBuilder;
 };
 
 #endif

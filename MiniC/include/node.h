@@ -59,17 +59,19 @@ public:
 
     virtual ~Node() { }
 
-    virtual void accept(Visitor* pVisitor) = 0;
     virtual Value* codeGen(CodeGenContext& context) { return NULL; }
 
+    ull getLineNo() const { return m_lineNo; }
+
 private:
-    ull m_lineNo;
+    const ull m_lineNo;
 };
 
 class Expr : public Node
 {
 public:
     Expr(ull lineNo) : Node(lineNo) {}
+    virtual Value* codeGen(CodeGenContext& context) { return NULL; }
 };
 
 class DataType : public Expr
@@ -84,6 +86,8 @@ public:
     { 
         Log().Get(logDEBUG1) << "Creating DataType: " << DataType::getDataTypeStr(m_type) << std::endl;  
     }
+
+      std::string getDataType() const { return getDataTypeStr(m_type); }
 
     static std::string getDataTypeStr(EnumDataType t)
     {
@@ -125,8 +129,6 @@ public:
 
         return "";
     }
-
-    virtual void accept(Visitor* pVisitor);
 };
 
 class Identifier : public Expr
@@ -143,8 +145,6 @@ public:
     }
 
     std::string getName() const { return m_name; }
-
-    virtual void accept(Visitor* pVisitor);
 };
 
 class Stmt : public Node
@@ -166,7 +166,7 @@ public:
         Log().Get(logDEBUG1) << "Creating Integer: " << value << std::endl;  
     }
 
-    virtual void accept(Visitor* pVisitor);
+    virtual Value* codeGen(CodeGenContext& context);
 };
 
 class Double : public Expr
@@ -181,7 +181,7 @@ public:
         Log().Get(logDEBUG1) << "Creating Double: " << value << std::endl;  
     }
 
-    virtual void accept(Visitor* pVisitor);
+    virtual Value* codeGen(CodeGenContext& context);
 };
 
 class Float : public Expr
@@ -196,7 +196,7 @@ public:
         Log().Get(logDEBUG1) << "Creating Float: " << value << std::endl;  
     }
 
-    virtual void accept(Visitor* pVisitor);
+    virtual Value* codeGen(CodeGenContext& context);
 };
 
 class Bool : public Expr
@@ -211,7 +211,7 @@ public:
         Log().Get(logDEBUG1) << "Creating Bool: " << value << std::endl;
     }
 
-    virtual void accept(Visitor* pVisitor);
+    virtual Value* codeGen(CodeGenContext& context);
 };
 
 class Char : public Expr
@@ -225,8 +225,8 @@ public:
     {
         Log().Get(logDEBUG1) << "Creating Char: " << value << std::endl;
     }
-
-    virtual void accept(Visitor* pVisitor);
+    
+    virtual Value* codeGen(CodeGenContext& context);
 };
 
 class FunctionCall : public Expr
@@ -250,25 +250,24 @@ public:
         Log().Get(logDEBUG1) << "Creating FunctionCall: " << pId->getName() << std::endl;  
     }
 
-    virtual void accept(Visitor* pVisitor);
+    virtual Value* codeGen(CodeGenContext& context);
 };
 
 class Assignment : public Expr
 {
 private:
-    Identifier* m_pLhs;
+    const Identifier* m_pLhs;
     Expr* m_pRhs;
 
 public:
-    Assignment(Identifier* pLhs,
-                Expr* pRhs,
-                ull lineNo) : 
+    Assignment(const Identifier* pLhs,
+               Expr* pRhs,
+               ull lineNo) : 
     m_pLhs(pLhs), m_pRhs(pRhs), Expr(lineNo)
     {
         Log().Get(logDEBUG1) << "Creating Assignment" << std::endl;  
     }
 
-    virtual void accept(Visitor* pVisitor);
 };
 
 class Block : public Expr
@@ -287,7 +286,7 @@ public:
         m_Stmts.push_back(pStmt);
     }
 
-    virtual void accept(Visitor* pVisitor);
+    virtual Value* codeGen(CodeGenContext& context);
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -309,7 +308,6 @@ public:
     {
     }
 
-    virtual void accept(Visitor* pVisitor);
 };
 
 class AdditionUnaryExpr : public NegateUnaryExpr
@@ -319,7 +317,6 @@ public:
     {
     }
 
-    virtual void accept(Visitor* pVisitor);
 };
 
 class SubtractUnaryExpr : public NegateUnaryExpr
@@ -329,7 +326,6 @@ public:
     {
     }
 
-    virtual void accept(Visitor* pVisitor);
 };
 
 
@@ -363,7 +359,7 @@ public:
     {
     }
 
-    virtual void accept(Visitor* pVisitor);
+    virtual Value* codeGen(CodeGenContext& context);
 };
 
 class SubtractionBinaryExpr : public NumberBinaryExpr
@@ -373,7 +369,7 @@ public:
     {
     }
 
-    virtual void accept(Visitor* pVisitor);
+    virtual Value* codeGen(CodeGenContext& context);
 };
 
 class MultiplicationBinaryExpr : public NumberBinaryExpr
@@ -383,7 +379,7 @@ public:
     {
     }
 
-    virtual void accept(Visitor* pVisitor);
+    virtual Value* codeGen(CodeGenContext& context);
 };
 
 class DivisionBinaryExpr : public NumberBinaryExpr
@@ -393,7 +389,7 @@ public:
     {
     }
 
-    virtual void accept(Visitor* pVisitor);
+    virtual Value* codeGen(CodeGenContext& context);
 };
 
 class ModulusBinaryExpr : public NumberBinaryExpr
@@ -403,7 +399,7 @@ public:
     {
     }
 
-    virtual void accept(Visitor* pVisitor);
+    virtual Value* codeGen(CodeGenContext& context);
 };
 
 
@@ -423,7 +419,6 @@ public:
     {
     }
 
-    virtual void accept(Visitor* pVisitor);
 };
 
 class AndBinaryExpr : public LogicBinaryExpr
@@ -433,7 +428,6 @@ public:
     {
     }
 
-    virtual void accept(Visitor* pVisitor);
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -452,7 +446,6 @@ public:
     {
     }
 
-    virtual void accept(Visitor* pVisitor);
 };
 
 class LTCompareBinaryExpr : public CompareBinaryExpr
@@ -461,7 +454,6 @@ public:
     LTCompareBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : CompareBinaryExpr(pLhs, pRhs, lineNo)
     {
     }
-    virtual void accept(Visitor* pVisitor);
 };
 
 class GECompareBinaryExpr : public CompareBinaryExpr
@@ -471,7 +463,6 @@ public:
     {
     }
 
-    virtual void accept(Visitor* pVisitor);
 };
 
 class GTCompareBinaryExpr : public CompareBinaryExpr
@@ -481,7 +472,6 @@ public:
     {
     }
 
-    virtual void accept(Visitor* pVisitor);
 };
 
 class EQCompareBinaryExpr : public CompareBinaryExpr
@@ -490,7 +480,6 @@ public:
     EQCompareBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : CompareBinaryExpr(pLhs, pRhs, lineNo)
     {
     }
-    virtual void accept(Visitor* pVisitor);
 };
 
 class NECompareBinaryExpr : public CompareBinaryExpr
@@ -499,7 +488,6 @@ public:
     NECompareBinaryExpr(Expr* pLhs, Expr* pRhs, ull lineNo) : CompareBinaryExpr(pLhs, pRhs, lineNo)
     {
     }
-    virtual void accept(Visitor* pVisitor);
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -510,7 +498,6 @@ public:
     {
     }
 
-    virtual void accept(Visitor* pVisitor);
 };
 
 class IfStmt : public Stmt
@@ -529,7 +516,6 @@ public:
     {
     }
 
-    virtual void accept(Visitor* pVisitor);
 };
 
 class WhileStmt : public Stmt
@@ -543,7 +529,6 @@ public:
     {
     }
 
-    virtual void accept(Visitor* pVisitor);
 };
 
 class ReturnStmt : public Stmt
@@ -556,7 +541,6 @@ public:
     {
     }
 
-    virtual void accept(Visitor* pVisitor);
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -573,7 +557,6 @@ public:
         Log().Get(logDEBUG1) << "Creating ExprStmt" << std::endl;  
     }
 
-    virtual void accept(Visitor* pVisitor);
 };
 
 class Variable : public Stmt
@@ -601,9 +584,8 @@ public:
         Log().Get(logDEBUG1) << "Creating Variable: " << m_pId->getName() << std::endl;  
     }
 
-    virtual void accept(Visitor* pVisitor);
-
     const Identifier* getIdentifier() { return m_pId; }
+    virtual Value* codeGen(CodeGenContext& context);
 };
 
 class FuncDecl : public Stmt
@@ -622,8 +604,6 @@ public:
     {
         Log().Get(logDEBUG1) << "Creating FuncDecl" << std::endl;  
     }
-
-    virtual void accept(Visitor* pVisitor);
 
     const Identifier* getIdentifier() { return m_pId; }
 };
@@ -648,8 +628,6 @@ public:
         Log().Get(logDEBUG1) << "Creating FuncDefn" << std::endl;  
     }
 
-    virtual void accept(Visitor* pVisitor);
-
     const Identifier* getIdentifier() { return m_pId; }
     const DataType*   getReturnType() { return m_pReturnType; }
     void setBlock(Block* pBlock)
@@ -671,7 +649,13 @@ public:
         Log().Get(logDEBUG1) << "Creating MainDefn" << std::endl;  
     }
 
-    virtual void accept(Visitor* pVisitor);
 };
+
+template <typename T>
+T* Error(const char* pStr)
+{
+    fprintf(stderr, "Error: %s\n", pStr);
+    return NULL;
+}
 
 #endif

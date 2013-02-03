@@ -6,7 +6,7 @@
 #include <vector>
 #include <visitor.h>
 
-#include <llvm/Value.h>
+#include <llvm/IR/Value.h>
 
 #include "logger.h"
 #include "utils.h"
@@ -649,6 +649,7 @@ public:
         Log().Get(logDEBUG1) << "Creating MainDefn" << std::endl;  
     }
 
+	virtual Value* codeGen(CodeGenContext& context);
 };
 
 template <typename T>

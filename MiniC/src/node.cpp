@@ -142,3 +142,12 @@ Value* Block::codeGen(CodeGenContext& context)
 	return last;
 }
 
+Value* MainDefn::codeGen(CodeGenContext& context)
+{
+	FunctionType* fType = FunctionType::get(Type::getInt32Ty(getGlobalContext()), 0);
+	Function* pMainFunc = Function::Create(fType, GlobalValue::InternalLinkage, "main", context.getModule());
+
+	context.SetMainFunction(pMainFunc);
+
+	return pMainFunc;
+}

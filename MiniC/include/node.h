@@ -6,7 +6,12 @@
 #include <vector>
 #include <visitor.h>
 
+#include <llvm\Config\config.h>
+#if defined(LLVM_VERSION_MAJOR) && LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR > 2 
 #include <llvm/IR/Value.h>
+#else
+#include <llvm/Value.h>
+#endif
 
 #include "logger.h"
 #include "utils.h"
@@ -28,8 +33,6 @@ typedef std::vector<Expr*> ExprList;
 typedef std::vector<Variable*> VariableList;
 
 typedef unsigned long long ull;
-
-using namespace llvm;
 
 enum EnumDataType
 {
@@ -59,7 +62,7 @@ public:
 
     virtual ~Node() { }
 
-    virtual Value* codeGen(CodeGenContext& context) { return NULL; }
+    virtual llvm::Value* codeGen(CodeGenContext& context) { return NULL; }
 
     ull getLineNo() const { return m_lineNo; }
 
@@ -71,7 +74,7 @@ class Expr : public Node
 {
 public:
     Expr(ull lineNo) : Node(lineNo) {}
-    virtual Value* codeGen(CodeGenContext& context) { return NULL; }
+    virtual llvm::Value* codeGen(CodeGenContext& context) { return NULL; }
 };
 
 class DataType : public Expr
@@ -166,7 +169,7 @@ public:
         Log().Get(logDEBUG1) << "Creating Integer: " << value << std::endl;  
     }
 
-    virtual Value* codeGen(CodeGenContext& context);
+    virtual llvm::Value* codeGen(CodeGenContext& context);
 };
 
 class Double : public Expr
@@ -181,7 +184,7 @@ public:
         Log().Get(logDEBUG1) << "Creating Double: " << value << std::endl;  
     }
 
-    virtual Value* codeGen(CodeGenContext& context);
+    virtual llvm::Value* codeGen(CodeGenContext& context);
 };
 
 class Float : public Expr
@@ -196,7 +199,7 @@ public:
         Log().Get(logDEBUG1) << "Creating Float: " << value << std::endl;  
     }
 
-    virtual Value* codeGen(CodeGenContext& context);
+    virtual llvm::Value* codeGen(CodeGenContext& context);
 };
 
 class Bool : public Expr
@@ -211,7 +214,7 @@ public:
         Log().Get(logDEBUG1) << "Creating Bool: " << value << std::endl;
     }
 
-    virtual Value* codeGen(CodeGenContext& context);
+    virtual llvm::Value* codeGen(CodeGenContext& context);
 };
 
 class Char : public Expr
@@ -226,7 +229,7 @@ public:
         Log().Get(logDEBUG1) << "Creating Char: " << value << std::endl;
     }
     
-    virtual Value* codeGen(CodeGenContext& context);
+    virtual llvm::Value* codeGen(CodeGenContext& context);
 };
 
 class FunctionCall : public Expr
@@ -250,7 +253,7 @@ public:
         Log().Get(logDEBUG1) << "Creating FunctionCall: " << pId->getName() << std::endl;  
     }
 
-    virtual Value* codeGen(CodeGenContext& context);
+    virtual llvm::Value* codeGen(CodeGenContext& context);
 };
 
 class Assignment : public Expr
@@ -286,7 +289,7 @@ public:
         m_Stmts.push_back(pStmt);
     }
 
-    virtual Value* codeGen(CodeGenContext& context);
+    virtual llvm::Value* codeGen(CodeGenContext& context);
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -359,7 +362,7 @@ public:
     {
     }
 
-    virtual Value* codeGen(CodeGenContext& context);
+    virtual llvm::Value* codeGen(CodeGenContext& context);
 };
 
 class SubtractionBinaryExpr : public NumberBinaryExpr
@@ -369,7 +372,7 @@ public:
     {
     }
 
-    virtual Value* codeGen(CodeGenContext& context);
+    virtual llvm::Value* codeGen(CodeGenContext& context);
 };
 
 class MultiplicationBinaryExpr : public NumberBinaryExpr
@@ -379,7 +382,7 @@ public:
     {
     }
 
-    virtual Value* codeGen(CodeGenContext& context);
+    virtual llvm::Value* codeGen(CodeGenContext& context);
 };
 
 class DivisionBinaryExpr : public NumberBinaryExpr
@@ -389,7 +392,7 @@ public:
     {
     }
 
-    virtual Value* codeGen(CodeGenContext& context);
+    virtual llvm::Value* codeGen(CodeGenContext& context);
 };
 
 class ModulusBinaryExpr : public NumberBinaryExpr
@@ -399,7 +402,7 @@ public:
     {
     }
 
-    virtual Value* codeGen(CodeGenContext& context);
+    virtual llvm::Value* codeGen(CodeGenContext& context);
 };
 
 
@@ -585,7 +588,7 @@ public:
     }
 
     const Identifier* getIdentifier() { return m_pId; }
-    virtual Value* codeGen(CodeGenContext& context);
+    virtual llvm::Value* codeGen(CodeGenContext& context);
 };
 
 class FuncDecl : public Stmt
@@ -649,7 +652,7 @@ public:
         Log().Get(logDEBUG1) << "Creating MainDefn" << std::endl;  
     }
 
-	virtual Value* codeGen(CodeGenContext& context);
+    virtual llvm::Value* codeGen(CodeGenContext& context);
 };
 
 template <typename T>

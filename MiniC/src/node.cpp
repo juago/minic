@@ -3,21 +3,21 @@
 #include <codegen.h>
 
 /* Returns an LLVM type based on the identifier */
-static Type *typeOf(std::string& type) 
+static llvm::Type *typeOf(std::string& type) 
 {
     if (type.compare("int") == 0) {
-		return Type::getInt64Ty(getGlobalContext());
-	}
+        return llvm::Type::getInt64Ty(llvm::getGlobalContext());
+    }
     else if (type.compare("double") == 0) {
-		return Type::getDoubleTy(getGlobalContext());
-	}
-	return Type::getVoidTy(getGlobalContext());
+        return llvm::Type::getDoubleTy(llvm::getGlobalContext());
+    }
+    return llvm::Type::getVoidTy(llvm::getGlobalContext());
 }
 
-Value* Variable::codeGen(CodeGenContext& context)
+llvm::Value* Variable::codeGen(CodeGenContext& context)
 {
     std::cout << "Creating Variable Declaration: " << m_pId->getName() << std::endl;
-    AllocaInst* pAlloc = new AllocaInst(typeOf(m_datatype->getDataType()), m_pId->getName(), context.currentBlock());
+    llvm::AllocaInst* pAlloc = new llvm::AllocaInst(typeOf(m_datatype->getDataType()), m_pId->getName(), context.currentBlock());
     context.locals()[m_pId->getName()] = pAlloc;
     if (m_pAssignmentExpr != NULL)
     {
@@ -28,55 +28,55 @@ Value* Variable::codeGen(CodeGenContext& context)
     return pAlloc;
 }
 
-Value* Integer::codeGen(CodeGenContext& context)
+llvm::Value* Integer::codeGen(CodeGenContext& context)
 {
-    return ConstantInt::get(Type::getInt32Ty(getGlobalContext()), m_value);
+    return llvm::ConstantInt::get(llvm::Type::getInt32Ty(llvm::getGlobalContext()), m_value);
 }
 
-Value* Double::codeGen(CodeGenContext& context)
+llvm::Value* Double::codeGen(CodeGenContext& context)
 {
-    return ConstantFP::get(Type::getDoubleTy(getGlobalContext()), m_value);
+    return llvm::ConstantFP::get(llvm::Type::getDoubleTy(llvm::getGlobalContext()), m_value);
 }
 
-Value* Float::codeGen(CodeGenContext& context)
+llvm::Value* Float::codeGen(CodeGenContext& context)
 {
-    return ConstantFP::get(Type::getFloatTy(getGlobalContext()), m_value);
+    return llvm::ConstantFP::get(llvm::Type::getFloatTy(llvm::getGlobalContext()), m_value);
 }
 
-Value* Bool::codeGen(CodeGenContext& context)
+llvm::Value* Bool::codeGen(CodeGenContext& context)
 {
-    return ConstantInt::get(Type::getInt1Ty(getGlobalContext()), m_value);
+    return llvm::ConstantInt::get(llvm::Type::getInt1Ty(llvm::getGlobalContext()), m_value);
 }
 
-Value* Char::codeGen(CodeGenContext& context)
+llvm::Value* Char::codeGen(CodeGenContext& context)
 {
-    return ConstantInt::get(Type::getInt8Ty(getGlobalContext()), m_value);
+    return llvm::ConstantInt::get(llvm::Type::getInt8Ty(llvm::getGlobalContext()), m_value);
 }
 
-Value* FunctionCall::codeGen(CodeGenContext& context)
+llvm::Value* FunctionCall::codeGen(CodeGenContext& context)
 {
-    Function* pFunction = context.getModule()->getFunction(m_pId->getName());
+    llvm::Function* pFunction = context.getModule()->getFunction(m_pId->getName());
     if (pFunction == NULL)
     {
         std::cerr << "No such function: " << m_pId->getName() << std::endl;
     }
 
-    std::vector<Value *> args;
+    std::vector<llvm::Value *> args;
     ExprList::const_iterator it;
     for (it = m_arguments.begin(); it != m_arguments.end(); ++it)
     {
         args.push_back((*it)->codeGen(context));
     }
 
-    CallInst* pCall = CallInst::Create(pFunction, makeArrayRef(args), "", context.currentBlock());
+    llvm::CallInst* pCall = llvm::CallInst::Create(pFunction, llvm::makeArrayRef(args), "", context.currentBlock());
     std::cout << "Creating method call: " << m_pId->getName() << std::endl;
     return pCall;
 }
 
-Value* AdditionBinaryExpr::codeGen(CodeGenContext& context)
+llvm::Value* AdditionBinaryExpr::codeGen(CodeGenContext& context)
 {
-    Value* pL = m_pLhs->codeGen(context);
-    Value* pR = m_pRhs->codeGen(context);
+    llvm::Value* pL = m_pLhs->codeGen(context);
+    llvm::Value* pR = m_pRhs->codeGen(context);
 
     if (pL == NULL || pR == NULL)
         return NULL;
@@ -84,10 +84,10 @@ Value* AdditionBinaryExpr::codeGen(CodeGenContext& context)
     return context.getBuilder()->CreateAdd(pL, pR, "addtmp");
 }
 
-Value* SubtractionBinaryExpr::codeGen(CodeGenContext& context)
+llvm::Value* SubtractionBinaryExpr::codeGen(CodeGenContext& context)
 {
-    Value* pL = m_pLhs->codeGen(context);
-    Value* pR = m_pRhs->codeGen(context);
+    llvm::Value* pL = m_pLhs->codeGen(context);
+    llvm::Value* pR = m_pRhs->codeGen(context);
 
     if (pL == NULL || pR == NULL)
         return NULL;
@@ -95,10 +95,10 @@ Value* SubtractionBinaryExpr::codeGen(CodeGenContext& context)
     return context.getBuilder()->CreateSub(pL, pR, "addtmp");
 }
 
-Value* MultiplicationBinaryExpr::codeGen(CodeGenContext& context)
+llvm::Value* MultiplicationBinaryExpr::codeGen(CodeGenContext& context)
 {
-    Value* pL = m_pLhs->codeGen(context);
-    Value* pR = m_pRhs->codeGen(context);
+    llvm::Value* pL = m_pLhs->codeGen(context);
+    llvm::Value* pR = m_pRhs->codeGen(context);
 
     if (pL == NULL || pR == NULL)
         return NULL;
@@ -106,10 +106,10 @@ Value* MultiplicationBinaryExpr::codeGen(CodeGenContext& context)
     return context.getBuilder()->CreateMul(pL, pR, "addtmp");
 }
 
-Value* DivisionBinaryExpr::codeGen(CodeGenContext& context)
+llvm::Value* DivisionBinaryExpr::codeGen(CodeGenContext& context)
 {
-    Value* pL = m_pLhs->codeGen(context);
-    Value* pR = m_pRhs->codeGen(context);
+    llvm::Value* pL = m_pLhs->codeGen(context);
+    llvm::Value* pR = m_pRhs->codeGen(context);
 
     if (pL == NULL || pR == NULL)
         return NULL;
@@ -117,10 +117,10 @@ Value* DivisionBinaryExpr::codeGen(CodeGenContext& context)
     return context.getBuilder()->CreateFDiv(pL, pR, "addtmp");
 }
 
-Value* ModulusBinaryExpr::codeGen(CodeGenContext& context)
+llvm::Value* ModulusBinaryExpr::codeGen(CodeGenContext& context)
 {
-    Value* pL = m_pLhs->codeGen(context);
-    Value* pR = m_pRhs->codeGen(context);
+    llvm::Value* pL = m_pLhs->codeGen(context);
+    llvm::Value* pR = m_pRhs->codeGen(context);
 
     if (pL == NULL || pR == NULL)
         return NULL;
@@ -128,26 +128,26 @@ Value* ModulusBinaryExpr::codeGen(CodeGenContext& context)
     return context.getBuilder()->CreateFRem(pL, pR, "addtmp");
 }
 
-Value* Block::codeGen(CodeGenContext& context)
+llvm::Value* Block::codeGen(CodeGenContext& context)
 {
     StmtList::const_iterator it;
-	Value *last = NULL;
-	for (it = m_Stmts.begin(); it != m_Stmts.end(); it++) 
+    llvm::Value *last = NULL;
+    for (it = m_Stmts.begin(); it != m_Stmts.end(); it++) 
     {
-		std::cout << "Generating code for " << typeid(**it).name() << endl;
-		last = (**it).codeGen(context);
-	}
-	
+        std::cout << "Generating code for " << typeid(**it).name() << endl;
+        last = (**it).codeGen(context);
+    }
+    
     std::cout << "Creating block" << endl;
-	return last;
+    return last;
 }
 
-Value* MainDefn::codeGen(CodeGenContext& context)
+llvm::Value* MainDefn::codeGen(CodeGenContext& context)
 {
-	FunctionType* fType = FunctionType::get(Type::getInt32Ty(getGlobalContext()), 0);
-	Function* pMainFunc = Function::Create(fType, GlobalValue::InternalLinkage, "main", context.getModule());
+    llvm::FunctionType* fType = llvm::FunctionType::get(llvm::Type::getInt32Ty(llvm::getGlobalContext()), 0);
+    llvm::Function* pMainFunc = llvm::Function::Create(fType, llvm::GlobalValue::InternalLinkage, "main", context.getModule());
 
-	context.SetMainFunction(pMainFunc);
+    context.SetMainFunction(pMainFunc);
 
-	return pMainFunc;
+    return pMainFunc;
 }

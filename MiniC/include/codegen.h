@@ -34,11 +34,12 @@
 
 class NBlock;
 
-class CodeGenBlock 
+class SymTable 
 {
 public:
     llvm::BasicBlock *block;
     std::map<std::string, llvm::Value*> locals;
+    std::string currentScope;
 };
 
 class CodeGenContext {
@@ -47,14 +48,17 @@ public:
     { 
         m_pModule = new llvm::Module("c-main", llvm::getGlobalContext()); 
         m_pBuilder = new llvm::IRBuilder<>(llvm::getGlobalContext());
+        m_globalSymTable = new SymTable();
+        m_globalSymTable->currentScope = "global";
+        m_symTables.push(m_globalSymTable);
     }
     
     void generateCode(Block& root);
     llvm::GenericValue runCode();
-    std::map<std::string, llvm::Value*>& locals() { return m_blocks.top()->locals; }
-    llvm::BasicBlock* currentBlock() { return m_blocks.top()->block; }
-    void pushBlock(llvm::BasicBlock *block) { m_blocks.push(new CodeGenBlock()); m_blocks.top()->block = block; }
-    void popBlock() { CodeGenBlock *top = m_blocks.top(); m_blocks.pop(); delete top; }
+    std::map<std::string, llvm::Value*>& locals() { return m_symTables.top()->locals; }
+    SymTable* currentSymbolTable() { return m_symTables.top(); }
+    void pushBlock(llvm::BasicBlock *block) { m_symTables.push(new SymTable()); m_symTables.top()->block = block; }
+    void popBlock() { SymTable *top = m_symTables.top(); m_symTables.pop(); delete top; }
     llvm::Module* getModule() const { return m_pModule; }
     llvm::IRBuilder<>* getBuilder() const { return m_pBuilder; }
 
@@ -69,7 +73,8 @@ public:
     }
 
 private:
-    std::stack<CodeGenBlock *>       m_blocks;
+    std::stack<SymTable *>           m_symTables;
+    SymTable*                        m_globalSymTable;
     llvm::Function*                  m_pMainFunction;
     llvm::Module*                    m_pModule;
     llvm::IRBuilder<>*               m_pBuilder;

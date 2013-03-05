@@ -1,5 +1,3 @@
-int glo = 10;
-
 int testfunc(int g)
 {
     int a = 5 * 3;

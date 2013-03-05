@@ -87,11 +87,12 @@ public:
              ull lineNo) :
       m_type(dataType), Expr(lineNo) 
     { 
-        Log().Get(logDEBUG1) << "Creating DataType: " << DataType::getDataTypeStr(m_type) << std::endl;  
     }
 
-      std::string getDataType() const { return getDataTypeStr(m_type); }
+    std::string getTypeStr() const { return getDataTypeStr(m_type); }
+    llvm::Type* getLLVMType(CodeGenContext& context);
 
+private:
     static std::string getDataTypeStr(EnumDataType t)
     {
         switch(t)
@@ -144,7 +145,6 @@ public:
                 ull lineNo) :
         m_name(name), Expr(lineNo) 
     {
-        Log().Get(logDEBUG1) << "Creating Identifier: " << m_name << std::endl;
     }
 
     std::string getName() const { return m_name; }
@@ -166,7 +166,6 @@ public:
     Integer(long long value,
              ull lineNo) : m_value(value), Expr(lineNo) 
     {
-        Log().Get(logDEBUG1) << "Creating Integer: " << value << std::endl;  
     }
 
     virtual llvm::Value* codeGen(CodeGenContext& context);
@@ -181,7 +180,6 @@ public:
     Double(double value, 
             ull lineNo) : m_value(value), Expr(lineNo) 
     {
-        Log().Get(logDEBUG1) << "Creating Double: " << value << std::endl;  
     }
 
     virtual llvm::Value* codeGen(CodeGenContext& context);
@@ -196,7 +194,6 @@ public:
     Float(float value,
            ull lineNo) : m_value(value), Expr(lineNo)
     {
-        Log().Get(logDEBUG1) << "Creating Float: " << value << std::endl;  
     }
 
     virtual llvm::Value* codeGen(CodeGenContext& context);
@@ -211,7 +208,6 @@ public:
     Bool(bool value,
           ull  lineNo) : m_value(value), Expr(lineNo)
     {
-        Log().Get(logDEBUG1) << "Creating Bool: " << value << std::endl;
     }
 
     virtual llvm::Value* codeGen(CodeGenContext& context);
@@ -226,7 +222,6 @@ public:
     Char(char value,
           ull  lineNo) : m_value(value), Expr(lineNo)
     {
-        Log().Get(logDEBUG1) << "Creating Char: " << value << std::endl;
     }
     
     virtual llvm::Value* codeGen(CodeGenContext& context);
@@ -236,21 +231,19 @@ class FunctionCall : public Expr
 {
 private:
     const Identifier* m_pId;
-    ExprList     m_arguments;
+    ExprList          m_arguments;
 
 public:
     FunctionCall(const Identifier* pId,
-                ExprList& arguments,
-                ull lineNo) :
+                 ExprList& arguments,
+                 ull lineNo) :
     m_pId(pId), m_arguments(arguments), Expr(lineNo)
     {
-        Log().Get(logDEBUG1) << "Creating FunctionCall: " << pId->getName() << std::endl;  
     }
 
     FunctionCall(const Identifier* pId,
                 ull lineNo) : m_pId(pId), Expr(lineNo) 
     {
-        Log().Get(logDEBUG1) << "Creating FunctionCall: " << pId->getName() << std::endl;  
     }
 
     virtual llvm::Value* codeGen(CodeGenContext& context);
@@ -268,9 +261,9 @@ public:
                ull lineNo) : 
     m_pLhs(pLhs), m_pRhs(pRhs), Expr(lineNo)
     {
-        Log().Get(logDEBUG1) << "Creating Assignment" << std::endl;  
     }
 
+    virtual llvm::Value* codeGen(CodeGenContext& context);
 };
 
 class Block : public Expr
@@ -557,7 +550,6 @@ public:
                          ull lineNo) : 
     m_pExpr(pExpr), Stmt(lineNo) 
     {
-        Log().Get(logDEBUG1) << "Creating ExprStmt" << std::endl;  
     }
 
 };
@@ -565,91 +557,90 @@ public:
 class Variable : public Stmt
 {
 private:
-    const DataType* m_datatype;
-    const Identifier*     m_pId;
-    Expr*     m_pAssignmentExpr;
+    DataType*       m_pDatatype;
+    Identifier*     m_pId;
+    Expr*           m_pAssignmentExpr;
 
 public:
-    Variable(const DataType* dataType, 
+    Variable(DataType* dataType, 
              Identifier* pId,
              ull lineNo) : 
-    m_datatype(dataType), m_pId(pId), m_pAssignmentExpr(NULL), Stmt(lineNo) 
+    m_pDatatype(dataType), m_pId(pId), m_pAssignmentExpr(NULL), Stmt(lineNo) 
     {
-        Log().Get(logDEBUG1) << "Creating Variable: " << m_pId->getName() << std::endl;  
     }
 
-    Variable(const DataType* dataType,
+    Variable(DataType* dataType,
              Identifier* pId,
              Expr* assignmentExpr,
              ull lineNo) :
-    m_datatype(dataType), m_pId(pId), m_pAssignmentExpr(assignmentExpr), Stmt(lineNo) 
+    m_pDatatype(dataType), m_pId(pId), m_pAssignmentExpr(assignmentExpr), Stmt(lineNo) 
     {
-        Log().Get(logDEBUG1) << "Creating Variable: " << m_pId->getName() << std::endl;  
     }
 
-    const Identifier* getIdentifier() { return m_pId; }
+    DataType* getDataType() { return m_pDatatype; }
+
+    Identifier* getIdentifier() { return m_pId; }
     virtual llvm::Value* codeGen(CodeGenContext& context);
 };
 
 class FuncDecl : public Stmt
 {
 protected:
-    const DataType*   m_pDataType;
-    const Identifier* m_pId;
-    VariableList       m_arguments;
+    DataType*   m_pDataType;
+    Identifier* m_pId;
+    VariableList*     m_pArgs;
 
 public:
-    FuncDecl(const DataType* datatype,
-                         const Identifier* id,
-                         const VariableList& arguments,
-                         ull lineNo) :
-    m_pDataType(datatype), m_pId(id), m_arguments(arguments), Stmt(lineNo) 
+    FuncDecl(DataType* datatype,
+             Identifier* id,
+             VariableList* pArgs,
+             ull lineNo) :
+    m_pDataType(datatype), m_pId(id), m_pArgs(pArgs), Stmt(lineNo) 
     {
-        Log().Get(logDEBUG1) << "Creating FuncDecl" << std::endl;  
     }
 
-    const Identifier* getIdentifier() { return m_pId; }
+    Identifier* getIdentifier() { return m_pId; }
 };
 
 class FuncDefn : public Stmt
 {
 protected:
-    const DataType*   m_pReturnType;
-    const Identifier* m_pId;
-    VariableList      m_arguments;
+    DataType*   m_pReturnType;
+    Identifier* m_pId;
+    VariableList*     m_pArgs;
     Block*            m_pBlock;
         
 public:
-    FuncDefn(const DataType* pReturnType, 
-             const Identifier* id,
-             const VariableList& arguments,
+    FuncDefn(DataType* pReturnType, 
+             Identifier* id,
+             VariableList* pArgs,
              Block* block,
              ull lineNo) :
-    m_pReturnType(pReturnType), m_pId(id), m_arguments(arguments), m_pBlock(block),
+    m_pReturnType(pReturnType), m_pId(id), m_pArgs(pArgs), m_pBlock(block),
     Stmt(lineNo)
     {
-        Log().Get(logDEBUG1) << "Creating FuncDefn" << std::endl;  
     }
 
-    const Identifier* getIdentifier() { return m_pId; }
-    const DataType*   getReturnType() { return m_pReturnType; }
+    Identifier* getIdentifier() { return m_pId; }
+    DataType*   getReturnType() { return m_pReturnType; }
     void setBlock(Block* pBlock)
     {
         m_pBlock = pBlock;
     }
+
+    virtual llvm::Value* codeGen(CodeGenContext& context);
 };
 
 class MainDefn : public FuncDefn
 {
 public:
-    MainDefn(const DataType* datatype, 
-                    const VariableList& arguments,
-                    Block* block,
-                    ull lineNo) :
-    FuncDefn(datatype, new Identifier("main", lineNo),
-                        arguments, block, lineNo) 
+    MainDefn(DataType* datatype, 
+             VariableList* pArgs,
+             Block* block,
+             ull lineNo)
+    : FuncDefn(datatype, new Identifier("main", lineNo),
+               pArgs, block, lineNo) 
     {
-        Log().Get(logDEBUG1) << "Creating MainDefn" << std::endl;  
     }
 
     virtual llvm::Value* codeGen(CodeGenContext& context);

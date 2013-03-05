@@ -153,8 +153,8 @@ program : stmts { pProgramBlock = $1; }
         ;
 
 stmts : stmt { $$ = new Block(lineNo); $$->AddStmt($<stmt>1); }
-	  | stmts stmt { $1->AddStmt($<stmt>2); }
-	  ;
+      | stmts stmt { $1->AddStmt($<stmt>2); }
+      ;
 
 stmt : var_decl 
      | main_decl
@@ -169,13 +169,13 @@ stmt : var_decl
      ;
 
 block : LBRACE stmts RBRACE { $$ = $2; }
-	  | LBRACE RBRACE { $$ = new Block(lineNo); }
-	  ;
+      | LBRACE RBRACE { $$ = new Block(lineNo); }
+      ;
 
 var_decl : data_type ident SEMICOLON                
-		   {
-			    $$ = new Variable($1, $2, lineNo);
-		   }
+           {
+                $$ = new Variable($1, $2, lineNo);
+           }
          | data_type ident EQUAL expr SEMICOLON     { $$ = new Variable($1, $2, $4, lineNo); }
          | data_type ident                          { $$ = new Variable($1, $2, lineNo); }
          ;
@@ -188,24 +188,24 @@ main_decl : data_type MAIN LPAREN func_args RPAREN SEMICOLON
 
 main_defn : data_type MAIN LPAREN func_args RPAREN block
             { 
-                pMain = new MainDefn($1, *$4, $6, lineNo); 
+                pMain = new MainDefn($1, $4, $6, lineNo); 
                 $$ = pMain; 
             }
           ;
 
 func_defn : data_type ident LPAREN func_args RPAREN block
             { 
-                $$ = new FuncDefn($1, $2, *$4, $6, lineNo);
+                $$ = new FuncDefn($1, $2, $4, $6, lineNo);
             }
           ;
 
 func_decl : data_type ident LPAREN func_args RPAREN SEMICOLON 
             { 
-                $$ = new FuncDecl($1, $2, *$4, lineNo);
+                $$ = new FuncDecl($1, $2, $4, lineNo);
             }
           ;
                   
-func_args : /*blank*/                       { $$ = new VariableList(lineNo); }
+func_args : /*blank*/                       { $$ = new VariableList(); }
           | var_decl                        { $$ = new VariableList(); $$->push_back($<var_decl>1); }
           | func_args COMMA var_decl        { $1->push_back($<var_decl>3); }
           ;
@@ -249,9 +249,9 @@ expr : ident EQUAL expr SEMICOLON           { $$ = new Assignment($<ident>1, $3,
      | LPAREN expr RPAREN                   { $$ = $2; }
      ;
     
-call_args : /*blank*/                       { $$ = new ExprList(lineNo); }
-          | VOID                            { $$ = new ExprList(lineNo); }
-          | expr                            { $$ = new ExprList(lineNo); $$->push_back($1); }
+call_args : /*blank*/                       { }
+          | VOID                            { }
+          | expr                            { $$ = new ExprList(); $$->push_back($1); }
           | call_args COMMA expr            { $1->push_back($3); }
           ;
 

@@ -919,8 +919,8 @@ case 21:
     break;}
 case 22:
 {
-			    yyval.stmt = new Variable(yyvsp[-2].data_type, yyvsp[-1].ident, lineNo);
-		   ;
+                yyval.stmt = new Variable(yyvsp[-2].data_type, yyvsp[-1].ident, lineNo);
+           ;
     break;}
 case 23:
 { yyval.stmt = new Variable(yyvsp[-4].data_type, yyvsp[-3].ident, yyvsp[-1].expr, lineNo); ;
@@ -935,22 +935,22 @@ case 25:
     break;}
 case 26:
 { 
-                pMain = new MainDefn(yyvsp[-5].data_type, *yyvsp[-2].varvec, yyvsp[0].block, lineNo); 
+                pMain = new MainDefn(yyvsp[-5].data_type, yyvsp[-2].varvec, yyvsp[0].block, lineNo); 
                 yyval.stmt = pMain; 
             ;
     break;}
 case 27:
 { 
-                yyval.stmt = new FuncDefn(yyvsp[-5].data_type, yyvsp[-4].ident, *yyvsp[-2].varvec, yyvsp[0].block, lineNo);
+                yyval.stmt = new FuncDefn(yyvsp[-5].data_type, yyvsp[-4].ident, yyvsp[-2].varvec, yyvsp[0].block, lineNo);
             ;
     break;}
 case 28:
 { 
-                yyval.stmt = new FuncDecl(yyvsp[-5].data_type, yyvsp[-4].ident, *yyvsp[-2].varvec, lineNo);
+                yyval.stmt = new FuncDecl(yyvsp[-5].data_type, yyvsp[-4].ident, yyvsp[-2].varvec, lineNo);
             ;
     break;}
 case 29:
-{ yyval.varvec = new VariableList(lineNo); ;
+{ yyval.varvec = new VariableList(); ;
     break;}
 case 30:
 { yyval.varvec = new VariableList(); yyval.varvec->push_back(yyvsp[0].var_decl); ;
@@ -1031,13 +1031,13 @@ case 59:
 { yyval.expr = yyvsp[-1].expr; ;
     break;}
 case 60:
-{ yyval.exprvec = new ExprList(lineNo); ;
+{ ;
     break;}
 case 61:
-{ yyval.exprvec = new ExprList(lineNo); ;
+{ ;
     break;}
 case 62:
-{ yyval.exprvec = new ExprList(lineNo); yyval.exprvec->push_back(yyvsp[0].expr); ;
+{ yyval.exprvec = new ExprList(); yyval.exprvec->push_back(yyvsp[0].expr); ;
     break;}
 case 63:
 { yyvsp[-2].exprvec->push_back(yyvsp[0].expr); ;

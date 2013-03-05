@@ -2,30 +2,77 @@
 #include <visitor.h>
 #include <codegen.h>
 
-/* Returns an LLVM type based on the identifier */
-static llvm::Type *typeOf(std::string& type) 
+llvm::Type* DataType::getLLVMType(CodeGenContext& context)
 {
-    if (type.compare("int") == 0) {
-        return llvm::Type::getInt64Ty(llvm::getGlobalContext());
+    switch(m_type)
+    {
+    case _VOID_:
+        return context.getBuilder()->getVoidTy();
+    case _CHAR_:
+        return context.getBuilder()->getInt8Ty();
+    case _SHORT_:
+        return context.getBuilder()->getInt16Ty();
+    case _INT_:
+        return context.getBuilder()->getInt32Ty();
+    case _LONG_:
+        return context.getBuilder()->getInt64Ty();
+    case _FLOAT_:
+        return context.getBuilder()->getFloatTy();
+    case _DOUBLE_:
+        return context.getBuilder()->getDoubleTy();
+        //case _SIGNED_:
+        //    break;
+        //case _UNSIGNED_:
+        //    return "unsigned";
+    case _BOOL_:
+        return context.getBuilder()->getInt1Ty();
+        //case _COMPLEX_:
+        //    return "complex";
+        //case _IMAGINARY_:
+        //    return "imaginary";
+        //case _STRUCT_OR_UNION_:
+        //    return "struct_or_union";
+        //case _ENUM_:
+        //    return "enum";
+        //case _TYPENAME_:
+        //    return "typename";
+    default:
+        // return "invalid datatype";
+        break;
     }
-    else if (type.compare("double") == 0) {
-        return llvm::Type::getDoubleTy(llvm::getGlobalContext());
-    }
-    return llvm::Type::getVoidTy(llvm::getGlobalContext());
 }
+
 
 llvm::Value* Variable::codeGen(CodeGenContext& context)
 {
     std::cout << "Creating Variable Declaration: " << m_pId->getName() << std::endl;
-    llvm::AllocaInst* pAlloc = new llvm::AllocaInst(typeOf(m_datatype->getDataType()), m_pId->getName(), context.currentBlock());
-    context.locals()[m_pId->getName()] = pAlloc;
+    
+    llvm::Value* pVar = NULL;
+    
+    if (context.currentSymbolTable()->currentScope == "global")
+    {
+        llvm::GlobalVariable* pVar = new llvm::GlobalVariable(*context.getModule(),
+                                                              m_pDatatype->getLLVMType(context),
+                                                              false, 
+                                                              llvm::GlobalValue::InternalLinkage,
+                                                              NULL);
+    }
+    else
+    {
+        pVar = context.getBuilder()->CreateAlloca(m_pDatatype->getLLVMType(context),
+                                                  0,
+                                                  m_pId->getName());
+    }
+
+    context.locals()[m_pId->getName()] = pVar;
+    
     if (m_pAssignmentExpr != NULL)
     {
         Assignment assn(m_pId, m_pAssignmentExpr, getLineNo());
         assn.codeGen(context);
     }
 
-    return pAlloc;
+    return pVar;
 }
 
 llvm::Value* Integer::codeGen(CodeGenContext& context)
@@ -53,6 +100,11 @@ llvm::Value* Char::codeGen(CodeGenContext& context)
     return llvm::ConstantInt::get(llvm::Type::getInt8Ty(llvm::getGlobalContext()), m_value);
 }
 
+llvm::Value* Assignment::codeGen(CodeGenContext& context)
+{
+    return m_pRhs->codeGen(context);
+}
+
 llvm::Value* FunctionCall::codeGen(CodeGenContext& context)
 {
     llvm::Function* pFunction = context.getModule()->getFunction(m_pId->getName());
@@ -67,8 +119,10 @@ llvm::Value* FunctionCall::codeGen(CodeGenContext& context)
     {
         args.push_back((*it)->codeGen(context));
     }
+    
+    llvm::CallInst* pCall = context.getBuilder()->CreateCall(pFunction,
+                                                             llvm::makeArrayRef(args));
 
-    llvm::CallInst* pCall = llvm::CallInst::Create(pFunction, llvm::makeArrayRef(args), "", context.currentBlock());
     std::cout << "Creating method call: " << m_pId->getName() << std::endl;
     return pCall;
 }
@@ -142,12 +196,60 @@ llvm::Value* Block::codeGen(CodeGenContext& context)
     return last;
 }
 
+llvm::Value* FuncDefn::codeGen(CodeGenContext& context)
+{
+    llvm::FunctionType* fType = llvm::FunctionType::get(getReturnType()->getLLVMType(context),
+                                                        0);
+    llvm::Function* pFunction = llvm::Function::Create(fType,
+                                                       llvm::GlobalValue::InternalLinkage,
+                                                       getIdentifier()->getName(),
+                                                       context.getModule());
+
+    vector<llvm::Type*> argTypes;
+    VariableList::iterator it;
+    
+    for (it = m_pArgs->begin(); it != m_pArgs->end(); it++) 
+    {
+        argTypes.push_back((*it)->getDataType()->getLLVMType(context));
+    }
+
+    llvm::BasicBlock *bblock = llvm::BasicBlock::Create(llvm::getGlobalContext(),
+                                                        "entry",
+                                                        pFunction,
+                                                        0);
+    context.getBuilder()->SetInsertPoint(bblock);
+    context.pushBlock(bblock);
+
+    m_pBlock->codeGen(context);
+
+    return pFunction;
+}
+
 llvm::Value* MainDefn::codeGen(CodeGenContext& context)
 {
-    llvm::FunctionType* fType = llvm::FunctionType::get(llvm::Type::getInt32Ty(llvm::getGlobalContext()), 0);
-    llvm::Function* pMainFunc = llvm::Function::Create(fType, llvm::GlobalValue::InternalLinkage, "main", context.getModule());
+    llvm::FunctionType* fType = llvm::FunctionType::get(llvm::Type::getInt32Ty(llvm::getGlobalContext()),
+                                                        0);
+    
+    llvm::Function* pMainFunc = llvm::Function::Create(fType,
+                                                       llvm::GlobalValue::InternalLinkage,
+                                                       "main",
+                                                       context.getModule());
 
     context.SetMainFunction(pMainFunc);
+
+    vector<llvm::Type*> argTypes;
+    VariableList::iterator it;
+    
+    for (it = m_pArgs->begin(); it != m_pArgs->end(); it++) 
+    {
+        argTypes.push_back((*it)->getDataType()->getLLVMType(context));
+    }
+
+    llvm::BasicBlock *bblock = llvm::BasicBlock::Create(llvm::getGlobalContext(), "entry", pMainFunc, 0);
+    context.getBuilder()->SetInsertPoint(bblock);
+    context.pushBlock(bblock);
+
+    m_pBlock->codeGen(context);
 
     return pMainFunc;
 }

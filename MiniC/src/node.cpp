@@ -2,6 +2,8 @@
 #include <visitor.h>
 #include <codegen.h>
 
+#include <llvm/ADT/SmallVector.h>
+
 llvm::Type* DataType::getLLVMType(CodeGenContext& context)
 {
     switch(m_type)
@@ -45,8 +47,6 @@ llvm::Type* DataType::getLLVMType(CodeGenContext& context)
 
 llvm::Value* Variable::codeGen(CodeGenContext& context)
 {
-    std::cout << "Creating Variable Declaration: " << m_pId->getName() << std::endl;
-    
     llvm::Value* pVar = NULL;
     
     if (context.currentSymbolTable()->currentScope == "global")
@@ -123,7 +123,6 @@ llvm::Value* FunctionCall::codeGen(CodeGenContext& context)
     llvm::CallInst* pCall = context.getBuilder()->CreateCall(pFunction,
                                                              llvm::makeArrayRef(args));
 
-    std::cout << "Creating method call: " << m_pId->getName() << std::endl;
     return pCall;
 }
 
@@ -188,30 +187,32 @@ llvm::Value* Block::codeGen(CodeGenContext& context)
     llvm::Value *last = NULL;
     for (it = m_Stmts.begin(); it != m_Stmts.end(); it++) 
     {
-        std::cout << "Generating code for " << typeid(**it).name() << endl;
         last = (**it).codeGen(context);
     }
     
-    std::cout << "Creating block" << endl;
     return last;
 }
 
 llvm::Value* FuncDefn::codeGen(CodeGenContext& context)
 {
-    llvm::FunctionType* fType = llvm::FunctionType::get(getReturnType()->getLLVMType(context),
-                                                        0);
-    llvm::Function* pFunction = llvm::Function::Create(fType,
-                                                       llvm::GlobalValue::InternalLinkage,
-                                                       getIdentifier()->getName(),
-                                                       context.getModule());
-
-    vector<llvm::Type*> argTypes;
+    llvm::SmallVector<llvm::Type*, 4> argTypes;
     VariableList::iterator it;
-    
+
     for (it = m_pArgs->begin(); it != m_pArgs->end(); it++) 
     {
         argTypes.push_back((*it)->getDataType()->getLLVMType(context));
     }
+
+    llvm::ArrayRef<llvm::Type*> arrayRef = llvm::makeArrayRef(argTypes);
+
+    llvm::FunctionType* fType = llvm::FunctionType::get(getReturnType()->getLLVMType(context),
+                                                        arrayRef,
+                                                        false);
+
+    llvm::Function* pFunction = llvm::Function::Create(fType,
+                                                       llvm::GlobalValue::InternalLinkage,
+                                                       getIdentifier()->getName(),
+                                                       context.getModule());
 
     llvm::BasicBlock *bblock = llvm::BasicBlock::Create(llvm::getGlobalContext(),
                                                         "entry",

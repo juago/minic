@@ -274,7 +274,6 @@ private:
 public:
     Block(ull lineNo) : Expr(lineNo) 
     {
-        Log().Get(logDEBUG1) << "Creating Block" << std::endl;  
     }
 
     void AddStmt(Stmt* pStmt)

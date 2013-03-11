@@ -254,3 +254,9 @@ llvm::Value* MainDefn::codeGen(CodeGenContext& context)
 
     return pMainFunc;
 }
+
+llvm::Value* ReturnStmt::codeGen(CodeGenContext& context)
+{
+    llvm::ReturnInst* pReturnInst = context.getBuilder()->CreateRet(m_pReturnExpr->codeGen(context));
+    return pReturnInst;
+}
